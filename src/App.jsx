@@ -2,9 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { CartProvider, useCart } from './context/CartContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import MobileNav from './components/MobileNav';
 import CartDrawer from './components/CartDrawer';
-import ProductModal from './components/ProductModal';
 import ConsultationModal from './components/ConsultationModal';
 import LightboxModal from './components/LightboxModal';
 import GlobalSearchModal from './components/GlobalSearchModal';
@@ -31,13 +29,19 @@ import { trackPageView } from './utils/analytics';
 
 const isExternal = (href) => /^(https?:|tel:|mailto:)/.test(href);
 
+// The site may be served from a sub-folder (e.g. /Arisca-Light-Studio/ on GitHub
+// Pages). Routes inside the app are always written without it.
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
+const withBase = (path) => (BASE && !path.startsWith(BASE + '/') && path !== BASE ? BASE + path : path);
+const stripBase = (path) => (BASE && (path === BASE || path.startsWith(BASE + '/')) ? path.slice(BASE.length) || '/' : path);
+
 function readLocation() {
   // Legacy hash URLs (/#/shop?x=1) become clean paths
   if (window.location.hash.startsWith('#/')) {
     const clean = window.location.hash.slice(1);
-    window.history.replaceState({}, '', clean);
+    window.history.replaceState({}, '', withBase(clean));
   }
-  const path = window.location.pathname.replace(/\/+$/, '') || '/';
+  const path = stripBase(window.location.pathname).replace(/\/+$/, '') || '/';
   return { path, query: window.location.search.replace(/^\?/, '') };
 }
 
@@ -79,11 +83,11 @@ function AppContent() {
 
     let [pathAndQuery, anchor = opts.anchor] = target.split('#');
     let [path, query = ''] = pathAndQuery.split('?');
-    path = path || (anchor ? window.location.pathname : '/');
+    path = path || (anchor ? stripBase(window.location.pathname) : '/');
     if (!path.startsWith('/')) path = '/' + path;
-    path = path.replace(/\/+$/, '') || '/';
+    path = stripBase(path).replace(/\/+$/, '') || '/';
 
-    const url = path + (query ? `?${query}` : '') + (anchor ? `#${anchor}` : '');
+    const url = withBase(path) + (query ? `?${query}` : '') + (anchor ? `#${anchor}` : '');
     if (opts.replace) window.history.replaceState({}, '', url);
     else window.history.pushState({}, '', url);
     setLocation({ path, query });
@@ -146,25 +150,22 @@ function AppContent() {
     return <NotFoundPage onNavigate={navigate} />;
   };
 
-  const { isSearchOpen, closeSearch, openProductModal } = useCart();
+  const { isSearchOpen, closeSearch } = useCart();
 
   return (
     <div className="arisca-app-root">
       <a href="#main-content" className="skip-link" onClick={(e) => { e.preventDefault(); document.getElementById('main-content')?.focus(); }}>
         Skip to content
       </a>
-      <Toast />
+      <Toast onNavigate={navigate} />
       <Header currentRoute={currentRoute} routeQuery={routeQuery} onNavigate={navigate} />
 
       <main id="main-content" className="main-viewport" tabIndex={-1}>
         {renderPage()}
       </main>
 
-      {/* Currently commented out per user request */}
-      {/* <Footer onNavigate={navigate} /> */}
-      <MobileNav currentRoute={currentRoute} onNavigate={navigate} />
+      <Footer onNavigate={navigate} />
       <CartDrawer onNavigate={navigate} />
-      <ProductModal onNavigate={navigate} />
       <ConsultationModal />
       <LightboxModal />
       <CookieConsentBanner onNavigate={navigate} />
@@ -172,7 +173,6 @@ function AppContent() {
         isOpen={isSearchOpen}
         onClose={closeSearch}
         onNavigate={navigate}
-        onQuickView={openProductModal}
       />
     </div>
   );

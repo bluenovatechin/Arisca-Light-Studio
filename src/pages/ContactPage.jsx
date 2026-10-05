@@ -8,7 +8,6 @@ import {
   Phone,
   Mail,
   Clock,
-  MessageCircle,
   Instagram,
   Facebook,
   Send,
@@ -19,6 +18,8 @@ import {
   Check,
   AlertCircle
 } from 'lucide-react';
+import { openWhatsApp, formMessage } from '../utils/whatsapp';
+import WhatsAppIcon from '../components/WhatsAppIcon';
 
 export default function ContactPage() {
   const { showToast } = useCart();
@@ -67,7 +68,12 @@ export default function ContactPage() {
 
     setErrors({});
     setIsSubmitted(true);
-    showToast(`Thank you, ${formData.firstName}! Your message has been sent to info@ariscalightstudio.com.`);
+    openWhatsApp(formMessage(`Contact form: ${formData.subject}`, [
+      ['Name', `${formData.firstName} ${formData.lastName}`],
+      ['Phone', formData.phone],
+      ['Email', formData.email],
+      ['Message', formData.message]
+    ]));
   };
 
   return (
@@ -152,7 +158,7 @@ export default function ContactPage() {
 
                   <div className="contact-detail-row">
                     <div className="contact-icon-wrap">
-                      <MessageCircle size={20} className="teal-text" />
+                      <WhatsAppIcon size={20} className="teal-text" />
                     </div>
                     <div>
                       <strong>WhatsApp Support:</strong>
@@ -240,10 +246,8 @@ export default function ContactPage() {
                 {isSubmitted ? (
                   <div className="form-success-box">
                     <CheckCircle2 size={48} className="gold-text" />
-                    <h4>Message Successfully Sent!</h4>
-                    <p>
-                      Thank you, <strong>{formData.firstName}</strong>. Our customer concierge team will respond within 24 hours.
-                    </p>
+                    <h4>Almost there, {formData.firstName}!</h4>
+                    <p>We've opened WhatsApp with your details filled in. Press send there and our team will reply shortly.</p>
                     <button
                       className="btn btn-secondary mt-3"
                       onClick={() => setIsSubmitted(false)}
@@ -364,7 +368,7 @@ export default function ContactPage() {
                     </div>
 
                     <button type="submit" className="btn btn-primary btn-lg btn-block">
-                      <Send size={18} /> Send Message to Studio
+                      <WhatsAppIcon size={18} /> Send message on WhatsApp
                     </button>
                   </form>
                 )}

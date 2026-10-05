@@ -18,7 +18,7 @@ export default function NotFoundPage({ onNavigate }) {
     <div className="not-found-page-wrapper">
       <SeoHead
         title="404 - Page Not Found | Arisca Light Studio"
-        description="The lighting page or fixture you were looking for could not be found. Explore our complete architectural lighting collection and catalogs."
+        description="The lighting page or fixture you were looking for could not be found. Explore our complete architectural lighting collection."
         canonicalUrl="https://www.ariscalightstudio.com/#/404"
       />
 
@@ -30,7 +30,7 @@ export default function NotFoundPage({ onNavigate }) {
           <span className="section-badge">Error 404 • Unlit Corridor</span>
           <h1 className="not-found-title">This Page Is Not Illuminated</h1>
           <p className="not-found-subtitle">
-            The page, luminaire specification, or link you are seeking has either been relocated or no longer exists in our studio catalog.
+            The page, luminaire specification, or link you are seeking has either been relocated or no longer exists in our studio collection.
           </p>
 
           <div className="not-found-actions">
@@ -38,7 +38,7 @@ export default function NotFoundPage({ onNavigate }) {
               <Home size={18} /> Return to Studio Home
             </button>
             <button className="btn btn-secondary btn-lg" onClick={openSearch}>
-              <Search size={18} /> Search The Catalog
+              <Search size={18} /> Search the collection
             </button>
           </div>
 

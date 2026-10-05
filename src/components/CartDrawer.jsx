@@ -1,48 +1,43 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useCart } from '../context/CartContext';
-import { siteInfo, studioLocationInfo } from '../data/ariscaData';
-import {
-  X,
-  ShoppingBag,
-  Trash2,
-  Plus,
-  Minus,
-  MessageCircle,
-  FileText,
-  ArrowRight,
-  ShieldCheck,
-  MapPin,
-  Sparkles,
-  CheckCircle2
-} from 'lucide-react';
+import WhatsAppIcon from './WhatsAppIcon';
+import { X, ClipboardList, Trash2, CalendarCheck, ArrowRight, MapPin, ShieldCheck } from 'lucide-react';
 
 export default function CartDrawer({ onNavigate }) {
   const {
     cart,
     isCartOpen,
     closeCart,
-    updateQuantity,
     removeFromCart,
     clearCart,
     cartTotalCount,
-    cartTotalPrice,
-    cartTotalMrp,
-    cartSavings,
-    cartOnRequestCount,
     generateWhatsAppInquiryUrl,
     openConsultModal
   } = useCart();
 
   const [notes, setNotes] = useState('');
+  const [confirmClear, setConfirmClear] = useState(false);
+  const closeRef = useRef(null);
 
-  if (!isCartOpen) return null;
+  // Esc to close, lock the page behind the drawer, move focus into it
+  useEffect(() => {
+    if (!isCartOpen) {
+      setConfirmClear(false);
+      return undefined;
+    }
+    const onKey = (e) => e.key === 'Escape' && closeCart();
+    document.addEventListener('keydown', onKey);
+    document.body.classList.add('no-scroll');
+    const t = setTimeout(() => closeRef.current?.focus({ preventScroll: true }), 60);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.classList.remove('no-scroll');
+      clearTimeout(t);
+    };
+  }, [isCartOpen, closeCart]);
 
   const handleWhatsAppClick = () => {
-    let url = generateWhatsAppInquiryUrl();
-    if (notes.trim()) {
-      url += encodeURIComponent(`\n\nProject / Site Notes: ${notes.trim()}`);
-    }
-    window.open(url, '_blank', 'noopener,noreferrer');
+    window.open(generateWhatsAppInquiryUrl(notes), '_blank', 'noopener,noreferrer');
   };
 
   const handleConsultClick = () => {
@@ -50,225 +45,118 @@ export default function CartDrawer({ onNavigate }) {
     openConsultModal();
   };
 
+  const go = (href) => {
+    closeCart();
+    onNavigate(href);
+  };
+
   return (
-    <div className="drawer-overlay" onClick={closeCart} role="dialog" aria-modal="true" aria-label="Inquiry Basket">
-      <aside
-        className="drawer-panel"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Drawer Header */}
-        <div className="drawer-header">
-          <div className="drawer-title-wrap">
-            <ShoppingBag className="cart-header-icon" size={22} />
-            <div>
-              <h3>Inquiry Cart</h3>
-              <span className="drawer-subtitle">
-                {cartTotalCount} {cartTotalCount === 1 ? 'luminaire fixture' : 'luminaire fixtures'} selected
-              </span>
-            </div>
+    <div className={`bk ${isCartOpen ? 'is-open' : ''}`} aria-hidden={!isCartOpen}>
+      <div className="bk-backdrop" onClick={closeCart} />
+      <aside className="bk-panel" role="dialog" aria-modal="true" aria-label="Your inquiry" inert={!isCartOpen ? '' : undefined}>
+        <header className="bk-head">
+          <div>
+            <p className="eyebrow bk-eyebrow"><span className="eyebrow-lines" aria-hidden="true" />Your inquiry</p>
+            <h2 className="bk-title">
+              {cartTotalCount === 0 ? 'Nothing here yet' : <>{cartTotalCount} {cartTotalCount === 1 ? 'piece' : 'pieces'} <em>to discuss</em></>}
+            </h2>
           </div>
-          <button
-            className="drawer-close-btn"
-            onClick={closeCart}
-            aria-label="Close cart drawer"
-          >
+          <button ref={closeRef} type="button" className="bk-close" onClick={closeCart} aria-label="Close inquiry">
             <X size={20} />
           </button>
-        </div>
+        </header>
 
-        {/* Free Shipping / Survey Progress Indicator */}
-        {cartTotalPrice > 0 && (
-          <div className="cart-incentive-banner">
-            <Sparkles size={14} className="gold-text" />
-            <span>
-              {cartTotalPrice >= 25000
-                ? '🎉 Congratulations! You unlocked FREE On-Site Laser Measurement & Lighting Layout!'
-                : `Add ₹${(25000 - cartTotalPrice).toLocaleString('en-IN')} more to unlock FREE on-site laser survey across Ahmedabad!`}
-            </span>
-          </div>
-        )}
-
-        {/* Drawer Content */}
-        <div className="drawer-content custom-scrollbar">
+        <div className="bk-body">
           {cart.length === 0 ? (
-            <div className="drawer-empty-state">
-              <div className="empty-icon-circle">
-                <ShoppingBag size={40} />
+            <div className="bk-empty">
+              <div className="bk-empty-art" aria-hidden="true">
+                <span className="bk-empty-glow" />
+                <ClipboardList size={34} strokeWidth={1.4} />
               </div>
-              <h4>Your Inquiry Cart is Empty</h4>
-              <p>
-                Browse our architectural catalog of LOFY downlights, anti-glare COB fixtures, chandeliers, and surface cylinders to build your lighting plan.
-              </p>
-              <button
-                className="btn btn-primary"
-                onClick={() => {
-                  closeCart();
-                  onNavigate('/collection');
-                }}
-              >
-                Explore Lighting Collection <ArrowRight size={16} />
-              </button>
+              <h3>Shortlist pieces you'd like to talk about</h3>
+              <p>Add lights from the collection, then send the list to us in one message or book a visit — our team will guide you on finishes, sizes and availability.</p>
+              <div className="bk-empty-actions">
+                <button type="button" className="btn-pill btn-pill-solid" onClick={() => go('/collection')}>
+                  Browse the collection <ArrowRight size={16} />
+                </button>
+                <button type="button" className="btn-pill" onClick={() => go('/wishlist')}>
+                  Open saved lights
+                </button>
+              </div>
             </div>
           ) : (
-            <div className="cart-items-list">
-              {cart.map(({ product, quantity }) => {
-                const priced = typeof product.price === 'number';
-                const itemPrice = product.price;
-                const itemTotal = priced ? itemPrice * quantity : 0;
-                return (
-                  <div key={product.id} className="cart-item-card">
-                    <div className="cart-item-img-wrap">
-                      <img
-                        src={product.thumbnail || product.images?.[0]?.url}
-                        alt={product.title}
-                        loading="lazy"
-                      />
-                    </div>
-                    <div className="cart-item-info">
-                      <div className="cart-item-header">
-                        <h4
-                          className="cart-item-title"
-                          onClick={() => {
-                            closeCart();
-                            onNavigate(product.href || `/product/${product.slug}`);
-                          }}
-                        >
+            <>
+              <ul className="bk-list">
+                {cart.map(({ product }) => {
+                  const href = product.href || `/product/${product.slug}`;
+                  const meta = [product.itemNo && `No. ${product.itemNo}`, product.finish, product.wattage && `${product.wattage}W`]
+                    .filter(Boolean)
+                    .join(' · ');
+                  return (
+                    <li key={product.id} className="bk-item">
+                      <a href={href} className="bk-item-img" onClick={(e) => { e.preventDefault(); go(href); }} tabIndex={-1}>
+                        <img src={product.thumbnail || product.images?.[0]?.url} alt="" loading="lazy" />
+                      </a>
+                      <div className="bk-item-info">
+                        <a href={href} className="bk-item-title" onClick={(e) => { e.preventDefault(); go(href); }}>
                           {product.title}
-                        </h4>
-                        <button
-                          className="item-remove-btn"
-                          onClick={() => removeFromCart(product.id)}
-                          title="Remove fixture"
-                          aria-label={`Remove ${product.title}`}
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                        </a>
+                        {meta && <p className="bk-item-meta">{meta}</p>}
                       </div>
+                      <button
+                        type="button"
+                        className="bk-remove"
+                        onClick={() => removeFromCart(product.id)}
+                        aria-label={`Remove ${product.title}`}
+                        title="Remove"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
 
-                      <div className="cart-item-tags">
-                        {product.finish && <span className="cart-tag">{product.finish}</span>}
-                        {product.wattage
-                          ? <span className="cart-tag">{product.wattage}W</span>
-                          : product.itemNo && <span className="cart-tag">No. {product.itemNo}</span>}
-                      </div>
-
-                      <div className="cart-item-footer">
-                        <div className="quantity-controls">
-                          <button
-                            className="qty-btn"
-                            onClick={() => updateQuantity(product.id, -1)}
-                            aria-label="Decrease quantity"
-                          >
-                            <Minus size={13} />
-                          </button>
-                          <span className="qty-value">{quantity}</span>
-                          <button
-                            className="qty-btn"
-                            onClick={() => updateQuantity(product.id, 1)}
-                            aria-label="Increase quantity"
-                          >
-                            <Plus size={13} />
-                          </button>
-                        </div>
-
-                        <div className="cart-item-price-wrap">
-                          {priced ? (
-                            <>
-                              <span className="item-unit-calc">₹{itemPrice.toLocaleString('en-IN')} × {quantity}</span>
-                              <span className="item-total-price">₹{itemTotal.toLocaleString('en-IN')}</span>
-                            </>
-                          ) : (
-                            <span className="item-unit-calc">Price on request</span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-
-              {/* Project / Site Notes Field */}
-              <div className="cart-notes-box">
-                <label htmlFor="cart-notes">Project Location & Ceiling Notes (Optional):</label>
+              <label className="bk-notes">
+                <span>Site notes <small>(optional)</small></span>
                 <textarea
-                  id="cart-notes"
-                  placeholder="e.g. 4BHK Villa in Bodakdev, false ceiling height 10.5ft, electrical pre-wiring stage..."
+                  placeholder="e.g. 4BHK villa in Bodakdev, false ceiling 10.5 ft, wiring stage…"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   rows={2}
                 />
-              </div>
+              </label>
 
-              {/* Studio Assurances */}
-              <div className="drawer-assurances">
-                <div className="assurance-row">
-                  <CheckCircle2 size={15} className="gold-text" />
-                  <span>Includes 2-Year Studio Warranty & Genuine Driver Ballast</span>
-                </div>
-                <div className="assurance-row">
-                  <MapPin size={15} className="gold-text" />
-                  <span>Showroom: B - 103, Money Plant High Street, Jagatpur Rd, Ahmedabad</span>
-                </div>
-              </div>
-            </div>
+              <ul className="bk-assure">
+                <li><ShieldCheck size={15} aria-hidden="true" /> Our team confirms finishes, sizes and availability with you</li>
+                <li><MapPin size={15} aria-hidden="true" /> See them lit at B-103, Money Plant High Street, Jagatpur Rd</li>
+              </ul>
+            </>
           )}
         </div>
 
-        {/* Drawer Footer with Financial Summary */}
         {cart.length > 0 && (
-          <div className="drawer-footer">
-            <div className="cart-summary-totals">
-              {cartOnRequestCount > 0 && (
-                <div className="summary-row">
-                  <span>{cartOnRequestCount} {cartOnRequestCount === 1 ? 'piece' : 'pieces'} from the collection</span>
-                  <span>Price on request</span>
-                </div>
+          <footer className="bk-foot">
+            <button type="button" className="btn-pill bk-wa" onClick={handleWhatsAppClick}>
+              <WhatsAppIcon size={18} /> Send this list on WhatsApp
+            </button>
+            <button type="button" className="btn-pill" onClick={handleConsultClick}>
+              <CalendarCheck size={17} /> Book a studio or site visit
+            </button>
+
+            <div className="bk-foot-row">
+              {confirmClear ? (
+                <span className="bk-confirm">
+                  Empty the list?
+                  <button type="button" onClick={() => { clearCart(); setConfirmClear(false); }}>Yes, clear</button>
+                  <button type="button" onClick={() => setConfirmClear(false)}>Keep</button>
+                </span>
+              ) : (
+                <button type="button" className="bk-clear" onClick={() => setConfirmClear(true)}>Clear list</button>
               )}
-              {cartTotalPrice > 0 && (
-                <>
-                  <div className="summary-row">
-                    <span>Downlights subtotal</span>
-                    <span>₹{cartTotalMrp.toLocaleString('en-IN')}</span>
-                  </div>
-                  {cartSavings > 0 && (
-                    <div className="summary-row savings">
-                      <span>Studio Instant Discount</span>
-                      <span>-₹{cartSavings.toLocaleString('en-IN')}</span>
-                    </div>
-                  )}
-                  <div className="summary-row total-highlight">
-                    <span>Estimated Total (Incl. GST)</span>
-                    <span className="total-amount">₹{cartTotalPrice.toLocaleString('en-IN')}</span>
-                  </div>
-                </>
-              )}
+              <button type="button" className="bk-continue" onClick={closeCart}>Keep browsing</button>
             </div>
-
-            <div className="drawer-footer-actions">
-              <button
-                className="btn btn-whatsapp btn-block"
-                onClick={handleWhatsAppClick}
-              >
-                <MessageCircle size={18} /> Request Formal WhatsApp Quotation
-              </button>
-
-              <button
-                className="btn btn-secondary btn-block"
-                onClick={handleConsultClick}
-              >
-                <FileText size={18} /> Book Free In-Home Laser Survey
-              </button>
-            </div>
-
-            <div className="drawer-footer-bottom">
-              <button className="clear-cart-btn" onClick={clearCart}>
-                Clear Cart
-              </button>
-              <span className="price-disclaimer">
-                Wholesale trade pricing available for certified architects
-              </span>
-            </div>
-          </div>
+          </footer>
         )}
       </aside>
     </div>

@@ -30,7 +30,7 @@ export default function LightingCalculator({ onNavigate }) {
     enrichedProducts[0];
 
   const handleAddPackage = () => {
-    addToCart(matchingProduct, fixturesCount);
+    addToCart(matchingProduct);
   };
 
   return (
@@ -144,7 +144,7 @@ export default function LightingCalculator({ onNavigate }) {
                 className="btn btn-primary btn-block"
                 onClick={handleAddPackage}
               >
-                <Plus size={16} /> Add {fixturesCount}x Fixtures to Inquiry
+                <Plus size={16} /> Add this light to your inquiry
               </button>
 
               <button

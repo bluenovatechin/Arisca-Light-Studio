@@ -148,9 +148,6 @@ export const enrichedProducts = rawProducts.map((p) => {
     finishCode.toLowerCase(),
     `${wattage}w`,
     `${wattage} watt`,
-    `under ${Math.ceil(price / 500) * 500}`,
-    `₹${price}`,
-    `${price}`,
     categoryKey,
     ...suitableRooms.map(r => r.toLowerCase()),
     'ahmedabad',
@@ -510,14 +507,6 @@ export const clientTestimonials = [
   }
 ];
 
-// Price Brackets for Instant Filter & SEO
-export const priceBrackets = [
-  { id: 'under_1000', label: 'Under ₹1,000', min: 0, max: 1000, description: 'Economical 7W Panels & Compact Accent Spots' },
-  { id: '1000_1800', label: '₹1,000 – ₹1,800', min: 1000, max: 1800, description: 'Best-Selling 12W Flava & Grace Architectural COBs' },
-  { id: '1800_2500', label: '₹1,800 – ₹2,500', min: 1800, max: 2500, description: 'High-Lumen 15W/18W Deep Anti-Glare Fixtures' },
-  { id: 'above_2500', label: 'Above ₹2,500', min: 2500, max: 99999, description: 'Luxury Surface Cylinders & Custom Dual-Tone Architectural Lights' }
-];
-
 // Ahmedabad Studio Location & Coverage Areas for Local SEO Ranking
 export const studioLocationInfo = {
   name: 'Arisca Light Studio — Flagship Architectural Lighting Showroom',
@@ -553,8 +542,8 @@ export const coverageAreas = [
 // High-Intent SEO FAQs for Google Rank #1
 export const seoFaqs = [
   {
-    q: 'What is the price range of architectural LED lights at Arisca Light Studio Ahmedabad?',
-    a: 'Arisca Light Studio offers luxury architectural lighting ranging from ₹590 for sleek LED panels, ₹890 to ₹1,850 for high-CRI anti-glare 7W–12W COB downlights, and ₹1,950 to ₹3,200 for bespoke dual-tone surface cylinders. We provide transparent studio pricing, quantity discounts for entire homes, and wholesale trade pricing for architects and interior designers.'
+    q: 'How is pricing decided for lights at Arisca Light Studio Ahmedabad?',
+    a: 'Every project is different, so pricing is shared after a short consultation with our lighting team. We look at the fixtures, finishes and quantities your space needs, then send a clear quotation. Book a studio visit or message us on WhatsApp to start; architects and interior designers get dedicated trade support.'
   },
   {
     q: 'Where is Arisca Light Studio located in Ahmedabad, and can I visit the showroom?',
@@ -601,24 +590,8 @@ export function searchArisca(query) {
   const clean = query.trim().toLowerCase();
   const tokens = clean.split(/\s+/).filter(Boolean);
 
-  // 1. Match Price queries (e.g. "under 2000", "1500", "cheap", "2000")
-  let priceFilter = null;
-  const underMatch = clean.match(/under\s*₹?\s*(\d+)/i) || clean.match(/below\s*₹?\s*(\d+)/i) || clean.match(/<\s*₹?\s*(\d+)/);
-  const numberMatch = clean.match(/\b(\d{3,5})\b/);
-
-  if (underMatch) {
-    const maxP = parseInt(underMatch[1], 10);
-    priceFilter = (p) => p.price <= maxP;
-  } else if (numberMatch && (clean.includes('rs') || clean.includes('₹') || clean.includes('price') || clean.includes('budget'))) {
-    const target = parseInt(numberMatch[1], 10);
-    priceFilter = (p) => Math.abs(p.price - target) <= 500;
-  }
-
   // 2. Product Search
   const matchingProducts = enrichedProducts.filter((p) => {
-    if (priceFilter && !priceFilter(p)) return false;
-    if (priceFilter && tokens.length <= 2 && (clean.includes('under') || clean.includes('below'))) return true;
-
     return tokens.every(token => 
       p.title.toLowerCase().includes(token) ||
       p.type.toLowerCase().includes(token) ||

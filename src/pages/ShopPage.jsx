@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { enrichedProducts, priceBrackets } from '../data/ariscaData';
+import { enrichedProducts } from '../data/ariscaData';
 import ProductCard from '../components/ProductCard';
 import SeoHead from '../components/SeoHead';
 import { useCart } from '../context/CartContext';
@@ -29,20 +29,16 @@ export default function ShopPage({ initialCategory = 'all', query = '', onNaviga
   const [wattageFilter, setWattageFilter] = useState('all');
   const [finishFilter, setFinishFilter] = useState('all');
   const [roomFilter, setRoomFilter] = useState('all');
-  const [maxPrice, setMaxPrice] = useState(5000);
-  const [minPrice, setMinPrice] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('featured');
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
-  // Apply URL query params (?category=cob&maxPrice=1500...). The router remounts
+  // Apply URL query params (?category=cob&wattage=12...). The router remounts
   // this page whenever the query changes, so this runs for every new URL.
   useEffect(() => {
     if (query) {
       const params = new URLSearchParams(query);
       if (params.get('category')) setCategoryFilter(params.get('category'));
-      if (params.get('maxPrice')) setMaxPrice(parseInt(params.get('maxPrice'), 10) || 5000);
-      if (params.get('minPrice')) setMinPrice(parseInt(params.get('minPrice'), 10) || 0);
       if (params.get('wattage')) setWattageFilter(params.get('wattage'));
       if (params.get('room')) setRoomFilter(params.get('room'));
     }
@@ -91,9 +87,6 @@ export default function ShopPage({ initialCategory = 'all', query = '', onNaviga
         // Category filter
         if (categoryFilter !== 'all' && p.categoryKey !== categoryFilter) return false;
 
-        // Price Filter
-        if (p.price < minPrice || p.price > maxPrice) return false;
-
         // Wattage filter
         if (wattageFilter !== 'all' && p.wattage !== parseInt(wattageFilter, 10)) {
           return false;
@@ -126,22 +119,18 @@ export default function ShopPage({ initialCategory = 'all', query = '', onNaviga
         return true;
       })
       .sort((a, b) => {
-        if (sortBy === 'price-asc') return a.price - b.price;
-        if (sortBy === 'price-desc') return b.price - a.price;
         if (sortBy === 'wattage-desc') return b.wattage - a.wattage;
-        if (sortBy === 'rating-desc') return parseFloat(b.rating) - parseFloat(a.rating);
-        if (sortBy === 'discount-desc') return b.discountPercent - a.discountPercent;
+        if (sortBy === 'wattage-asc') return a.wattage - b.wattage;
+        if (sortBy === 'name') return a.title.localeCompare(b.title);
         return (a.order || 0) - (b.order || 0);
       });
-  }, [categoryFilter, wattageFilter, finishFilter, roomFilter, minPrice, maxPrice, searchQuery, sortBy]);
+  }, [categoryFilter, wattageFilter, finishFilter, roomFilter, searchQuery, sortBy]);
 
   const resetAllFilters = () => {
     setCategoryFilter('all');
     setWattageFilter('all');
     setFinishFilter('all');
     setRoomFilter('all');
-    setMinPrice(0);
-    setMaxPrice(5000);
     setSearchQuery('');
     setSortBy('featured');
   };
@@ -151,17 +140,15 @@ export default function ShopPage({ initialCategory = 'all', query = '', onNaviga
     wattageFilter !== 'all' ||
     finishFilter !== 'all' ||
     roomFilter !== 'all' ||
-    minPrice > 0 ||
-    maxPrice < 5000 ||
     searchQuery.trim() !== '';
 
   return (
     <div className="shop-page-wrapper light-theme-shop">
       {/* Maximum SEO for Catalog */}
       <SeoHead
-        title={`Buy Architectural Lights in Ahmedabad | ${filteredProducts.length} Fixtures from ₹590`}
-        description="Browse Ahmedabad's complete architectural lighting catalog. COB downlights, surface cylinders, panels & magnetic track lights. True CRI Ra > 90. Free laser site survey across Ahmedabad."
-        keywords="buy lights ahmedabad, cob downlight prices, architectural light shop ahmedabad, lofy lighting, false ceiling downlights"
+        title={`Architectural Downlights in Ahmedabad | ${enrichedProducts.length} Fixtures | Arisca Light Studio`}
+        description="Browse Ahmedabad's complete architectural lighting range. COB downlights, surface cylinders, panels & magnetic track lights. True CRI Ra > 90. Free laser site survey across Ahmedabad."
+        keywords="architectural lights ahmedabad, cob downlights, architectural light studio ahmedabad, lofy lighting, false ceiling downlights"
         canonicalUrl="https://www.ariscalightstudio.com/#/shop"
       />
 
@@ -169,34 +156,28 @@ export default function ShopPage({ initialCategory = 'all', query = '', onNaviga
       <section className="shop-hero-banner">
         <div className="container">
           <span className="section-badge">
-            <Sparkles size={14} /> Comprehensive Studio Catalog
+            <Sparkles size={14} /> Architectural downlights
           </span>
           <h1 className="shop-hero-title">Architectural Lighting Collection</h1>
           <p className="shop-hero-subtitle">
-            Explore 68 master fixtures designed with optical precision, anti-glare technology, and direct studio pricing for homes and offices in Ahmedabad.
+            Explore 68 master fixtures designed with optical precision and anti-glare technology, for homes and offices across Ahmedabad.
           </p>
 
-          {/* Quick Price Bracket Shortcut Buttons */}
+          {/* Quick type shortcuts */}
           <div className="shop-price-quick-bar">
-            <span className="spqb-title">Shop by Price:</span>
-            {priceBrackets.map((pb) => {
-              const isSelected = minPrice === pb.min && maxPrice === pb.max;
-              return (
-                <button
-                  key={pb.id}
-                  className={`price-pill-btn ${isSelected ? 'active' : ''}`}
-                  onClick={() => {
-                    setMinPrice(pb.min);
-                    setMaxPrice(pb.max);
-                  }}
-                >
-                  <Tag size={13} /> {pb.label}
-                </button>
-              );
-            })}
+            <span className="spqb-title">Shop by type:</span>
+            {categories.map((c) => (
+              <button
+                key={c.id}
+                className={`price-pill-btn ${categoryFilter === c.id ? 'active' : ''}`}
+                onClick={() => setCategoryFilter(c.id)}
+              >
+                {c.label}
+              </button>
+            ))}
             {hasActiveFilters && (
               <button className="price-pill-btn reset" onClick={resetAllFilters}>
-                <RotateCcw size={13} /> Reset All Filters
+                <RotateCcw size={13} /> Reset filters
               </button>
             )}
           </div>
@@ -228,10 +209,10 @@ export default function ShopPage({ initialCategory = 'all', query = '', onNaviga
               <Search size={16} />
               <input
                 type="text"
-                placeholder="Search within catalog..."
+                placeholder="Search downlights…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                aria-label="Filter catalog products"
+                aria-label="Search downlights"
               />
               {searchQuery && (
                 <button className="clear-search-btn" onClick={() => setSearchQuery('')} aria-label="Clear">
@@ -250,11 +231,9 @@ export default function ShopPage({ initialCategory = 'all', query = '', onNaviga
                 aria-label="Sort products"
               >
                 <option value="featured">Featured & Recommended</option>
-                <option value="price-asc">Price: Low to High (₹)</option>
-                <option value="price-desc">Price: High to Low (₹)</option>
-                <option value="discount-desc">Biggest Studio Discount (%)</option>
-                <option value="wattage-desc">Highest Wattage (Power)</option>
-                <option value="rating-desc">Top Customer Rating (★)</option>
+                <option value="wattage-desc">Wattage: high to low</option>
+                <option value="wattage-asc">Wattage: low to high</option>
+                <option value="name">Name: A to Z</option>
               </select>
             </div>
           </div>
@@ -268,12 +247,6 @@ export default function ShopPage({ initialCategory = 'all', query = '', onNaviga
               <span className="filter-chip">
                 Category: {categoryFilter}
                 <X size={12} onClick={() => setCategoryFilter('all')} />
-              </span>
-            )}
-            {(minPrice > 0 || maxPrice < 5000) && (
-              <span className="filter-chip">
-                Price: ₹{minPrice} - ₹{maxPrice}
-                <X size={12} onClick={() => { setMinPrice(0); setMaxPrice(5000); }} />
               </span>
             )}
             {wattageFilter !== 'all' && (
@@ -312,42 +285,6 @@ export default function ShopPage({ initialCategory = 'all', query = '', onNaviga
                   Reset
                 </button>
               )}
-            </div>
-
-            {/* Price Filter Box with Interactive Slider */}
-            <div className="filter-group-box">
-              <h4 className="filter-group-title">
-                <Tag size={15} /> Price Range (INR)
-              </h4>
-              <div className="price-slider-wrap">
-                <div className="price-inputs-row">
-                  <div className="price-input-item">
-                    <span>Min</span>
-                    <strong>₹{minPrice.toLocaleString('en-IN')}</strong>
-                  </div>
-                  <span className="price-range-dash">–</span>
-                  <div className="price-input-item">
-                    <span>Max</span>
-                    <strong>₹{maxPrice.toLocaleString('en-IN')}</strong>
-                  </div>
-                </div>
-
-                <input
-                  type="range"
-                  min="500"
-                  max="5000"
-                  step="100"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(parseInt(e.target.value, 10))}
-                  className="price-range-slider"
-                  aria-label="Max price filter"
-                />
-                <div className="slider-limits">
-                  <span>₹500</span>
-                  <span>₹2,500</span>
-                  <span>₹5,000+</span>
-                </div>
-              </div>
             </div>
 
             {/* Category Filter */}
@@ -451,7 +388,7 @@ export default function ShopPage({ initialCategory = 'all', query = '', onNaviga
                 <Search size={44} className="no-res-icon" />
                 <h3>No Matching Luminaires Found</h3>
                 <p>
-                  No fixtures match your current filter selections. Try clearing your search keyword, adjusting the price slider, or resetting all filters.
+                  No fixtures match your current filter selections. Try clearing your search keyword or resetting the filters.
                 </p>
                 <button className="btn btn-primary" onClick={resetAllFilters}>
                   <RotateCcw size={16} /> Reset All Filters
@@ -484,20 +421,6 @@ export default function ShopPage({ initialCategory = 'all', query = '', onNaviga
             </div>
 
             <div className="mfd-body custom-scrollbar">
-              {/* Max Price */}
-              <div className="mfd-section">
-                <h4>Max Price: ₹{maxPrice.toLocaleString('en-IN')}</h4>
-                <input
-                  type="range"
-                  min="500"
-                  max="5000"
-                  step="100"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(parseInt(e.target.value, 10))}
-                  className="price-range-slider"
-                />
-              </div>
-
               {/* Category */}
               <div className="mfd-section">
                 <h4>Luminaire Type</h4>

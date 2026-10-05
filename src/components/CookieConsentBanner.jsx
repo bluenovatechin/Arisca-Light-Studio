@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, Cookie, X, Check } from 'lucide-react';
+import { Cookie, Check } from 'lucide-react';
 import { initAnalytics } from '../utils/analytics';
 
 export default function CookieConsentBanner({ onNavigate }) {
@@ -38,46 +38,32 @@ export default function CookieConsentBanner({ onNavigate }) {
   if (!isVisible) return null;
 
   return (
-    <aside className="cookie-banner-wrap" role="region" aria-label="Cookie consent">
-      <div className="cookie-banner-card">
-        <div className="cookie-banner-body">
-          <div className="cookie-icon-circle">
-            <Cookie size={22} className="gold-text" />
-          </div>
-          <div className="cookie-text-col">
-            <h4 className="cookie-title">Your Privacy & Lighting Experience</h4>
-            <p className="cookie-desc">
-              We use essential browser cookies to remember your inquiry cart and anonymous performance telemetry to keep our catalog fast. No invasive third-party trackers are used.{' '}
-              <a
-                href="/privacy-policy"
-                className="cookie-policy-link"
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate('/privacy-policy');
-                }}
-              >
-                Read our Privacy Policy.
-              </a>
-            </p>
-          </div>
+    <aside className="ck" role="region" aria-label="Cookie consent">
+      <div className="ck-body">
+        <span className="ck-icon" aria-hidden="true"><Cookie size={20} /></span>
+        <div>
+          <h4 className="ck-title">A quick note on cookies</h4>
+          <p className="ck-desc">
+            We remember your basket and saved lights, and count visits anonymously to keep the site fast. No third-party trackers.{' '}
+            <a
+              href="/privacy-policy"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigate('/privacy-policy');
+              }}
+            >
+              Privacy policy
+            </a>
+          </p>
         </div>
-
-        <div className="cookie-actions-row">
-          <button
-            type="button"
-            className="btn-cookie-essential"
-            onClick={handleEssentialOnly}
-          >
-            Essential Only
-          </button>
-          <button
-            type="button"
-            className="btn-cookie-accept"
-            onClick={handleAcceptAll}
-          >
-            <Check size={16} /> Accept All
-          </button>
-        </div>
+      </div>
+      <div className="ck-actions">
+        <button type="button" className="btn-pill" onClick={handleEssentialOnly}>
+          Essential only
+        </button>
+        <button type="button" className="btn-pill btn-pill-solid" onClick={handleAcceptAll}>
+          <Check size={16} /> Accept all
+        </button>
       </div>
     </aside>
   );

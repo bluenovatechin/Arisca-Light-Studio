@@ -1,333 +1,236 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useCart } from '../context/CartContext';
-import { validateEmail, validatePhone, validateRequired, isSpamSubmission } from '../utils/formValidation';
-import {
-  X,
-  Calendar,
-  CheckCircle2,
-  Phone,
-  MessageCircle,
-  MapPin,
-  Clock,
-  Sparkles,
-  AlertCircle
-} from 'lucide-react';
+import { validatePhone, validateRequired, validateEmail, isSpamSubmission } from '../utils/formValidation';
+import { openWhatsApp, formMessage, whatsappUrl } from '../utils/whatsapp';
+import WhatsAppIcon from './WhatsAppIcon';
+import { X, Store, Home, Video, Phone, MapPin, Clock, AlertCircle, Check, ArrowRight } from 'lucide-react';
+
+const SHOWROOM_IMG = '/assets/optimized/projects/dsc09758-a01hkH3Y9uhcKEc0.webp';
+
+const VISIT_TYPES = [
+  { id: 'studio', icon: Store, label: 'Studio visit', desc: 'See the lights switched on at Jagatpur Road' },
+  { id: 'site', icon: Home, label: 'Site visit', desc: 'We measure and plan at your home or project' },
+  { id: 'video', icon: Video, label: 'Video call', desc: 'A quick walkthrough from wherever you are' }
+];
+const PROJECT_TYPES = ['Apartment', 'Villa / Bungalow', 'Penthouse', 'Office / Retail', 'Architect / Designer'];
+const TIME_SLOTS = ['Morning', 'Afternoon', 'Evening'];
+
+const EMPTY = {
+  visitType: 'studio',
+  name: '',
+  phone: '',
+  email: '',
+  projectType: 'Apartment',
+  location: '',
+  preferredDate: '',
+  timeSlot: 'Afternoon',
+  notes: '',
+  includeList: true,
+  company_hp: ''
+};
 
 export default function ConsultationModal() {
-  const { isConsultModalOpen, closeConsultModal, showToast } = useCart();
+  const { isConsultModalOpen, closeConsultModal, cart } = useCart();
   const mountTime = useRef(Date.now());
-
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    phone: '',
-    email: '',
-    projectType: 'Residential Villa',
-    serviceNeeded: 'Whole-Home Lighting Layout & Measurement',
-    areaSqFt: '2500',
-    location: 'Ahmedabad',
-    preferredDate: '',
-    notes: '',
-    company_hp: ''
-  });
-
+  const firstField = useRef(null);
+  const [form, setForm] = useState(EMPTY);
   const [errors, setErrors] = useState({});
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [sentUrl, setSentUrl] = useState(null);
+
+  useEffect(() => {
+    if (!isConsultModalOpen) return undefined;
+    const onKey = (e) => e.key === 'Escape' && closeConsultModal();
+    document.addEventListener('keydown', onKey);
+    document.body.classList.add('no-scroll');
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.classList.remove('no-scroll');
+      setSentUrl(null);
+    };
+  }, [isConsultModalOpen, closeConsultModal]);
 
   if (!isConsultModalOpen) return null;
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const set = (name, value) => {
+    setForm((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: null }));
   };
+  const onInput = (e) => set(e.target.name, e.target.type === 'checkbox' ? e.target.checked : e.target.value);
+
+  const visit = VISIT_TYPES.find((v) => v.id === form.visitType);
+  const today = new Date().toISOString().split('T')[0];
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Bot check
-    if (isSpamSubmission(formData.company_hp, mountTime.current)) {
-      setIsSubmitted(true);
-      setTimeout(() => {
-        setIsSubmitted(false);
-        closeConsultModal();
-      }, 1500);
+    if (isSpamSubmission(form.company_hp, mountTime.current)) {
+      setSentUrl(whatsappUrl());
       return;
     }
 
-    const newErrors = {};
-    if (!validateRequired(formData.firstName, 2)) {
-      newErrors.firstName = 'First name required.';
-    }
-    if (!validatePhone(formData.phone)) {
-      newErrors.phone = 'Valid 10-digit mobile required.';
-    }
-    if (!validateEmail(formData.email)) {
-      newErrors.email = 'Valid email required.';
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+    const next = {};
+    if (!validateRequired(form.name, 2)) next.name = 'Please tell us your name.';
+    if (!validatePhone(form.phone)) next.phone = 'Enter a valid 10-digit mobile number.';
+    if (form.email && !validateEmail(form.email)) next.email = 'That email doesn’t look right.';
+    if (form.visitType === 'site' && !validateRequired(form.location, 3)) next.location = 'Where is the site?';
+    if (Object.keys(next).length) {
+      setErrors(next);
       return;
     }
 
+    const pieces = form.includeList && cart.length
+      ? cart.map(({ product: p }, i) => `${i + 1}. ${p.title}${p.itemNo ? ` (No. ${p.itemNo})` : ''}`).join('\n')
+      : '';
+    const text = formMessage(`Booking request: ${visit.label}`, [
+      ['Name', form.name],
+      ['Phone', form.phone],
+      ['Email', form.email],
+      ['Project', form.projectType],
+      ['Location', form.location],
+      ['Preferred date', form.preferredDate && new Date(form.preferredDate).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })],
+      ['Preferred time', form.timeSlot],
+      ['Notes', form.notes],
+      ['Shortlisted pieces', pieces && `\n${pieces}`]
+    ]);
     setErrors({});
-    setIsSubmitted(true);
-    showToast(
-      `Thank you, ${formData.firstName}! Your consultation request for ${formData.projectType} has been scheduled. Our design engineer will call you at ${formData.phone}.`
-    );
-    setTimeout(() => {
-      setIsSubmitted(false);
-      closeConsultModal();
-    }, 2500);
+    setSentUrl(whatsappUrl(text));
+    openWhatsApp(text);
+  };
+
+  const close = () => {
+    closeConsultModal();
+    if (sentUrl) setForm(EMPTY);
   };
 
   return (
-    <div className="modal-backdrop" onClick={closeConsultModal}>
-      <div
-        className="modal-container consult-modal-container"
-        onClick={(e) => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="consult-modal-title"
-      >
-        <button
-          className="modal-close-btn"
-          onClick={closeConsultModal}
-          aria-label="Close consultation modal"
-        >
+    <div className="bkg" role="dialog" aria-modal="true" aria-labelledby="bkg-title">
+      <div className="bkg-backdrop" onClick={close} />
+      <div className="bkg-sheet">
+        <button type="button" className="bkg-close" onClick={close} aria-label="Close booking">
           <X size={20} />
         </button>
 
-        {isSubmitted ? (
-          <div className="consult-success-view">
-            <div className="success-icon-wrap">
-              <CheckCircle2 size={54} className="gold-text" />
-            </div>
-            <h3>Consultation Request Received!</h3>
-            <p>
-              Thank you, <strong>{formData.firstName}</strong>. Our senior lighting consultant has received your brief for <strong>{formData.projectType}</strong>.
-            </p>
-            <p className="success-subtext">
-              We will contact you within 2 business hours at <strong>{formData.phone}</strong> to confirm your site visit.
-            </p>
-          </div>
-        ) : (
-          <div className="consult-modal-grid">
-            {/* Form Side */}
-            <div className="consult-form-side">
-              <div className="modal-header-section">
-                <span className="section-badge">
-                  <Sparkles size={12} /> Complimentary In-Home Service
-                </span>
-                <h2 id="consult-modal-title" className="modal-title">
-                  Book Lighting Consultation & Site Measurement
-                </h2>
-                <p className="modal-subtitle">
-                  Our lighting engineers assess ceiling depths, beam distribution, and ambiance requirements directly at your site in Ahmedabad.
-                </p>
-              </div>
-
-              <form onSubmit={handleSubmit} className="consult-form" noValidate>
-                {/* Spam Bot Honeypot */}
-                <div style={{ display: 'none', position: 'absolute', left: '-9999px' }} aria-hidden="true">
-                  <label htmlFor="c-hp">Leave empty</label>
-                  <input
-                    type="text"
-                    id="c-hp"
-                    name="company_hp"
-                    tabIndex={-1}
-                    autoComplete="off"
-                    value={formData.company_hp}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="c-fname">First Name *</label>
-                    <input
-                      type="text"
-                      id="c-fname"
-                      name="firstName"
-                      required
-                      placeholder="e.g. Rajesh"
-                      className={errors.firstName ? 'input-invalid' : ''}
-                      value={formData.firstName}
-                      onChange={handleChange}
-                    />
-                    {errors.firstName && <span className="form-error-msg"><AlertCircle size={12} /> {errors.firstName}</span>}
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="c-lname">Last Name</label>
-                    <input
-                      type="text"
-                      id="c-lname"
-                      name="lastName"
-                      placeholder="e.g. Shah"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="c-phone">Phone / WhatsApp *</label>
-                    <input
-                      type="tel"
-                      id="c-phone"
-                      name="phone"
-                      required
-                      placeholder="+91 98980 XXXXX"
-                      className={errors.phone ? 'input-invalid' : ''}
-                      value={formData.phone}
-                      onChange={handleChange}
-                    />
-                    {errors.phone && <span className="form-error-msg"><AlertCircle size={12} /> {errors.phone}</span>}
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="c-email">Email Address *</label>
-                    <input
-                      type="email"
-                      id="c-email"
-                      name="email"
-                      required
-                      placeholder="rajesh@example.com"
-                      className={errors.email ? 'input-invalid' : ''}
-                      value={formData.email}
-                      onChange={handleChange}
-                    />
-                    {errors.email && <span className="form-error-msg"><AlertCircle size={12} /> {errors.email}</span>}
-                  </div>
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="c-ptype">Project Type</label>
-                    <select
-                      id="c-ptype"
-                      name="projectType"
-                      value={formData.projectType}
-                      onChange={handleChange}
-                    >
-                      <option value="Residential Villa / Bungalow">Residential Villa / Bungalow</option>
-                      <option value="Luxury Apartment (3BHK / 4BHK / 5BHK)">Luxury Apartment (3BHK / 4BHK / 5BHK)</option>
-                      <option value="Penthouse / Duplex">Penthouse / Duplex</option>
-                      <option value="Commercial Office / Corporate Studio">Commercial Office / Corporate Studio</option>
-                      <option value="Retail Boutique / Restaurant / Cafe">Retail Boutique / Restaurant / Cafe</option>
-                      <option value="Architect / Interior Collaboration">Architect / Interior Collaboration</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="c-service">Service Scope</label>
-                    <select
-                      id="c-service"
-                      name="serviceNeeded"
-                      value={formData.serviceNeeded}
-                      onChange={handleChange}
-                    >
-                      <option value="Laser Site Measurement & Layout">Laser Site Measurement & Layout</option>
-                      <option value="Chandelier & Centerpiece Selection">Chandelier & Centerpiece Selection</option>
-                      <option value="Architectural COB Downlight Package">Architectural COB Downlight Package</option>
-                      <option value="Complete Turnkey Lighting Package">Complete Turnkey Lighting Package</option>
-                      <option value="Showroom Private Appointment">Showroom Private Appointment</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="c-location">Project Location in Ahmedabad</label>
-                    <input
-                      type="text"
-                      id="c-location"
-                      name="location"
-                      placeholder="e.g. Bodakdev, Bopal, Sindhu Bhavan, Shela"
-                      value={formData.location}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="c-date">Preferred Consultation Date</label>
-                    <input
-                      type="date"
-                      id="c-date"
-                      name="preferredDate"
-                      value={formData.preferredDate}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="c-notes">Project Notes or Special Requirements</label>
-                  <textarea
-                    id="c-notes"
-                    name="notes"
-                    rows={2}
-                    placeholder="Ceiling height, current electrical stage, favorite fixture styles..."
-                    value={formData.notes}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <button type="submit" className="btn btn-primary btn-lg btn-block">
-                  <Calendar size={18} /> Confirm Consultation Request
-                </button>
-              </form>
-            </div>
-
-            {/* Studio Info Sidebar */}
-            <div className="consult-sidebar">
-              <div className="consult-feature-card">
-                <h4>What to Expect:</h4>
-                <ul className="consult-steps-list">
-                  <li>
-                    <span className="step-num">1</span>
-                    <div>
-                      <strong>Free Site Visit</strong>
-                      <p>Laser measurements of ceiling cutouts and LUX lux levels.</p>
-                    </div>
-                  </li>
-                  <li>
-                    <span className="step-num">2</span>
-                    <div>
-                      <strong>Lighting Blueprint</strong>
-                      <p>Custom beam angle distribution and driver placement.</p>
-                    </div>
-                  </li>
-                  <li>
-                    <span className="step-num">3</span>
-                    <div>
-                      <strong>Flawless Installation</strong>
-                      <p>White-glove certified mounting and switch testing.</p>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="studio-contact-quick-card">
-                <h5>Prefer Immediate Assistance?</h5>
-                <a href="tel:+919898086656" className="quick-btn-item">
-                  <Phone size={16} className="gold-text" /> +91 98980 86656
-                </a>
-                <a
-                  href="https://wa.me/919898086656"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="quick-btn-item"
-                >
-                  <MessageCircle size={16} className="teal-text" /> WhatsApp Studio
-                </a>
-                <div className="quick-address">
-                  <MapPin size={14} className="gold-text" />
-                  <span>B - 103, Money Plant High Street, Jagatpur Rd, Ahmedabad</span>
-                </div>
-              </div>
+        <aside className="bkg-side">
+          <img src={SHOWROOM_IMG} alt="Lights on display at the Arisca studio" />
+          <div className="bkg-side-body">
+            <p className="eyebrow"><span className="eyebrow-lines" aria-hidden="true" />Arisca Light Studio</p>
+            <p className="bkg-side-title">Come and switch them on yourself.</p>
+            <ul className="bkg-side-list">
+              <li><MapPin size={15} aria-hidden="true" /> B-103, Money Plant High Street, Jagatpur Road, Ahmedabad</li>
+              <li><Clock size={15} aria-hidden="true" /> Mon – Sat, 10:00 am – 8:30 pm</li>
+            </ul>
+            <div className="bkg-side-actions">
+              <a href="tel:+919898086656" className="bkg-side-btn"><Phone size={15} /> Call</a>
+              <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="bkg-side-btn"><WhatsAppIcon size={15} /> WhatsApp</a>
             </div>
           </div>
-        )}
+        </aside>
+
+        <div className="bkg-main">
+          {sentUrl ? (
+            <div className="bkg-done">
+              <span className="bkg-done-icon" aria-hidden="true"><Check size={30} /></span>
+              <h2 className="bkg-title">Almost done — just hit send.</h2>
+              <p>We've opened WhatsApp with your booking filled in. Send the message and our team will confirm your {visit.label.toLowerCase()} shortly.</p>
+              <a href={sentUrl} target="_blank" rel="noopener noreferrer" className="btn-pill bkg-wa">
+                <WhatsAppIcon size={18} /> Open WhatsApp again
+              </a>
+              <button type="button" className="btn-pill" onClick={close}>Back to the site</button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} noValidate className="bkg-form">
+              <header className="bkg-head">
+                <p className="eyebrow"><span className="eyebrow-lines" aria-hidden="true" />Book a visit</p>
+                <h2 id="bkg-title" className="bkg-title">Let's light your space, <em>together.</em></h2>
+                <p className="bkg-lede">Free consultation. Pick how you'd like to meet — we'll confirm on WhatsApp.</p>
+              </header>
+
+              <div aria-hidden="true" className="bkg-hp">
+                <input type="text" name="company_hp" tabIndex={-1} autoComplete="off" value={form.company_hp} onChange={onInput} />
+              </div>
+
+              <fieldset className="bkg-field">
+                <legend>How would you like to meet?</legend>
+                <div className="bkg-visits">
+                  {VISIT_TYPES.map(({ id, icon: Icon, label, desc }) => (
+                    <label key={id} className={`bkg-visit ${form.visitType === id ? 'is-on' : ''}`}>
+                      <input type="radio" name="visitType" value={id} checked={form.visitType === id} onChange={onInput} />
+                      <span className="bkg-visit-icon"><Icon size={19} strokeWidth={1.6} /></span>
+                      <span className="bkg-visit-text"><strong>{label}</strong><small>{desc}</small></span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+
+              <div className="bkg-grid">
+                <label className={`bkg-input ${errors.name ? 'has-error' : ''}`}>
+                  <span>Your name *</span>
+                  <input ref={firstField} name="name" value={form.name} onChange={onInput} placeholder="e.g. Riya Shah" autoComplete="name" />
+                  {errors.name && <em><AlertCircle size={12} /> {errors.name}</em>}
+                </label>
+                <label className={`bkg-input ${errors.phone ? 'has-error' : ''}`}>
+                  <span>Mobile / WhatsApp *</span>
+                  <input name="phone" type="tel" inputMode="tel" value={form.phone} onChange={onInput} placeholder="98980 00000" autoComplete="tel" />
+                  {errors.phone && <em><AlertCircle size={12} /> {errors.phone}</em>}
+                </label>
+                <label className={`bkg-input ${errors.location ? 'has-error' : ''}`}>
+                  <span>Area in Ahmedabad{form.visitType === 'site' ? ' *' : ''}</span>
+                  <input name="location" value={form.location} onChange={onInput} placeholder="e.g. Bodakdev, Shela, Gota" />
+                  {errors.location && <em><AlertCircle size={12} /> {errors.location}</em>}
+                </label>
+                <label className={`bkg-input ${errors.email ? 'has-error' : ''}`}>
+                  <span>Email <small>(optional)</small></span>
+                  <input name="email" type="email" value={form.email} onChange={onInput} placeholder="you@example.com" autoComplete="email" />
+                  {errors.email && <em><AlertCircle size={12} /> {errors.email}</em>}
+                </label>
+              </div>
+
+              <fieldset className="bkg-field">
+                <legend>Project</legend>
+                <div className="bkg-chips">
+                  {PROJECT_TYPES.map((t) => (
+                    <button type="button" key={t} className={`bkg-chip ${form.projectType === t ? 'is-on' : ''}`} aria-pressed={form.projectType === t} onClick={() => set('projectType', t)}>
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+
+              <div className="bkg-grid bkg-when">
+                <label className="bkg-input">
+                  <span>Preferred date</span>
+                  <input name="preferredDate" type="date" min={today} value={form.preferredDate} onChange={onInput} />
+                </label>
+                <fieldset className="bkg-field">
+                  <legend>Time of day</legend>
+                  <div className="bkg-chips">
+                    {TIME_SLOTS.map((t) => (
+                      <button type="button" key={t} className={`bkg-chip ${form.timeSlot === t ? 'is-on' : ''}`} aria-pressed={form.timeSlot === t} onClick={() => set('timeSlot', t)}>
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </fieldset>
+              </div>
+
+              <label className="bkg-input">
+                <span>Anything we should know? <small>(optional)</small></span>
+                <textarea name="notes" rows={2} value={form.notes} onChange={onInput} placeholder="Ceiling height, rooms, the look you're after…" />
+              </label>
+
+              {cart.length > 0 && (
+                <label className="bkg-include">
+                  <input type="checkbox" name="includeList" checked={form.includeList} onChange={onInput} />
+                  <span>Include my {cart.length} shortlisted {cart.length === 1 ? 'piece' : 'pieces'}</span>
+                </label>
+              )}
+
+              <button type="submit" className="btn-pill bkg-wa bkg-submit">
+                <WhatsAppIcon size={18} /> Send booking on WhatsApp <ArrowRight size={16} />
+              </button>
+              <p className="bkg-fine">Opens WhatsApp with your details filled in, so nothing is sent until you press send.</p>
+            </form>
+          )}
+        </div>
       </div>
     </div>
   );

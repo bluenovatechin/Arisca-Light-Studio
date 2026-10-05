@@ -37,5 +37,5 @@ scratch/
 **/*.pdf
 
 # Duplicate root assets directory (Vite serves from public/assets)
-assets/
-legacy_backup/
+/assets/
+/legacy_backup/

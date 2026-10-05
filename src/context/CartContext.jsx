@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { siteInfo } from '../data/ariscaData';
+import { whatsappUrl } from '../utils/whatsapp';
 
 const CartContext = createContext(null);
 
@@ -8,7 +8,7 @@ export function CartProvider({ children }) {
   const [cart, setCart] = useState(() => {
     try {
       const saved = localStorage.getItem('arisca_cart');
-      return saved ? JSON.parse(saved) : [];
+      return saved ? JSON.parse(saved).map(({ product }) => ({ product })) : [];
     } catch {
       return [];
     }
@@ -27,7 +27,6 @@ export function CartProvider({ children }) {
   // UI Modals and Drawers
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isConsultModalOpen, setIsConsultModalOpen] = useState(false);
-  const [activeProductModal, setActiveProductModal] = useState(null);
   const [activeLightbox, setActiveLightbox] = useState(null);
   const [toasts, setToasts] = useState([]);
 
@@ -48,72 +47,80 @@ export function CartProvider({ children }) {
     }
   }, [wishlist]);
 
-  // Toast notifications helper
-  const showToast = (message, type = 'success') => {
-    const id = Date.now() + Math.random().toString(36).substr(2, 4);
-    setToasts((prev) => [...prev, { id, message, type }]);
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 4000);
-  };
+  // Toast notifications: one at a time — a new toast replaces the current one
+  // instead of stacking, so rapid actions never pile text up on screen.
+  // opts: { title, image, action: 'cart' | 'wishlist', duration }
+  const toastTimer = React.useRef(null);
+  const showToast = React.useCallback((message, type = 'success', opts = {}) => {
+    const id = Date.now() + Math.random().toString(36).slice(2, 6);
+    clearTimeout(toastTimer.current);
+    setToasts([{ id, message, type, ...opts }]);
+    toastTimer.current = setTimeout(() => setToasts([]), opts.duration || 3600);
+  }, []);
 
   const removeToast = (id) => {
+    clearTimeout(toastTimer.current);
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
-  // Cart operations
-  const addToCart = (product, quantity = 1) => {
-    setCart((prev) => {
-      const existing = prev.find((item) => item.product.id === product.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.product.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        );
-      }
-      return [...prev, { product, quantity }];
+  // Bumped on every add so the header basket icon can play its "landed" pulse
+  const [cartPulse, setCartPulse] = useState(0);
+
+  // The inquiry list holds each piece once: Arisca books consultations, it
+  // doesn't sell by quantity, so there are no counts or prices here.
+  const mergeIntoCart = (prev, product) =>
+    prev.some((item) => item.product.id === product.id) ? prev : [...prev, { product }];
+
+  // Adding never hijacks the screen with the drawer; a compact confirmation
+  // offers "View inquiry" instead.
+  const addToCart = (product) => {
+    const already = cart.some((item) => item.product.id === product.id);
+    setCart((prev) => mergeIntoCart(prev, product));
+    if (!already) setCartPulse((n) => n + 1);
+    showToast(product.title, already ? 'info' : 'success', {
+      title: already ? 'Already in your inquiry' : 'Added to your inquiry',
+      image: product.thumbnail || product.images?.[0]?.url,
+      action: 'cart'
     });
-    showToast(`Added "${product.title}" (${quantity}x) to your Inquiry Cart.`);
-    setIsCartOpen(true);
   };
 
-  const updateQuantity = (productId, delta) => {
-    setCart((prev) =>
-      prev
-        .map((item) => {
-          if (item.product.id === productId) {
-            const newQty = item.quantity + delta;
-            return newQty > 0 ? { ...item, quantity: newQty } : null;
-          }
-          return item;
-        })
-        .filter(Boolean)
-    );
+  const addManyToCart = (products) => {
+    if (!products.length) return;
+    setCart((prev) => products.reduce(mergeIntoCart, prev));
+    setCartPulse((n) => n + 1);
+    showToast(`${products.length} saved ${products.length === 1 ? 'light' : 'lights'} moved across`, 'success', {
+      title: 'Added to your inquiry',
+      image: products[0].thumbnail || products[0].images?.[0]?.url,
+      action: 'cart'
+    });
   };
 
+  // Removing happens inside the open drawer, where the list itself shows the change
   const removeFromCart = (productId) => {
     setCart((prev) => prev.filter((item) => item.product.id !== productId));
-    showToast('Item removed from inquiry cart.', 'info');
   };
 
   const clearCart = () => {
     setCart([]);
-    showToast('Inquiry cart cleared.', 'info');
   };
 
-  // Wishlist operations
+  // Wishlist operations (toast decided outside the updater so StrictMode's
+  // double-invoked updaters can't fire it twice)
   const toggleWishlist = (product) => {
-    setWishlist((prev) => {
-      const exists = prev.some((p) => p.id === product.id);
-      if (exists) {
-        showToast(`Removed "${product.title}" from saved favorites.`, 'info');
-        return prev.filter((p) => p.id !== product.id);
-      } else {
-        showToast(`Saved "${product.title}" to your favorites.`);
-        return [...prev, product];
-      }
+    const exists = wishlist.some((p) => p.id === product.id);
+    setWishlist((prev) =>
+      exists ? prev.filter((p) => p.id !== product.id) : [...prev.filter((p) => p.id !== product.id), product]
+    );
+    showToast(product.title, exists ? 'info' : 'success', {
+      title: exists ? 'Removed from saved lights' : 'Saved to your lights',
+      image: product.thumbnail || product.images?.[0]?.url,
+      action: exists ? undefined : 'wishlist'
     });
+  };
+
+  const clearWishlist = () => {
+    setWishlist([]);
+    showToast('Your shortlist is empty again.', 'info', { title: 'Saved lights cleared' });
   };
 
   const isInWishlist = (productId) => {
@@ -144,57 +151,33 @@ export function CartProvider({ children }) {
   const toggleMobileMenu = React.useCallback(() => setIsMobileMenuOpen((prev) => !prev), []);
 
   // Modals
-  const openCart = () => setIsCartOpen(true);
-  const closeCart = () => setIsCartOpen(false);
-  const toggleCart = () => setIsCartOpen((prev) => !prev);
+  const openCart = React.useCallback(() => setIsCartOpen(true), []);
+  const closeCart = React.useCallback(() => setIsCartOpen(false), []);
+  const toggleCart = React.useCallback(() => setIsCartOpen((prev) => !prev), []);
 
   const openConsultModal = () => setIsConsultModalOpen(true);
   const closeConsultModal = () => setIsConsultModalOpen(false);
 
-  const openProductModal = (product) => setActiveProductModal(product);
-  const closeProductModal = () => setActiveProductModal(null);
 
   const openLightbox = (url, caption) => setActiveLightbox({ url, caption });
   const closeLightbox = () => setActiveLightbox(null);
 
-  // Derived counts and pricing totals
-  const cartTotalCount = cart.reduce((acc, item) => acc + item.quantity, 0);
-  // Catalog pieces carry price: null ("price on request") and stay out of the totals
-  const isPriced = (p) => typeof p.price === 'number';
-  const cartTotalPrice = cart.reduce((acc, item) => acc + (isPriced(item.product) ? item.product.price * item.quantity : 0), 0);
-  const cartTotalMrp = cart.reduce((acc, item) => acc + (isPriced(item.product) ? (item.product.mrp || item.product.price) * item.quantity : 0), 0);
-  const cartOnRequestCount = cart.filter((item) => !isPriced(item.product)).length;
-  const cartSavings = Math.max(0, cartTotalMrp - cartTotalPrice);
+  const cartTotalCount = cart.length;
   const wishlistCount = wishlist.length;
 
-  // Generate WhatsApp inquiry text for cart items
-  const generateWhatsAppInquiryUrl = () => {
-    const rawNumber = siteInfo.contact.whatsappNumber || '919898086656';
+  // WhatsApp message listing every piece in the inquiry
+  const generateWhatsAppInquiryUrl = (notes = '') => {
     if (cart.length === 0) {
-      const msg = `Hello Arisca Light Studio, I would like to inquire about your architectural lighting collections and request an in-home consultation.`;
-      return `https://wa.me/${rawNumber}?text=${encodeURIComponent(msg)}`;
+      return whatsappUrl('Hello Arisca Light Studio, I would like to know more about your lighting collections and book a consultation.');
     }
-
-    let text = `Hello Arisca Light Studio! 🌟\n\nI am requesting a quotation & technical consultation for the following ${cartTotalCount} fixture(s):\n\n`;
-    let totalAmt = 0;
-    cart.forEach((item, index) => {
-      const p = item.product;
-      text += `${index + 1}. *${p.title}*\n`;
-      if (isPriced(p)) {
-        totalAmt += p.price * item.quantity;
-        text += `   • Quantity: ${item.quantity} units @ ₹${p.price.toLocaleString('en-IN')}\n`;
-      } else {
-        text += `   • Quantity: ${item.quantity} · price on request\n`;
-      }
-      if (p.itemNo) text += `   • Item No: ${p.itemNo}\n`;
-      if (p.finish) text += `   • Finish: ${p.finish}\n`;
-      if (p.wattage) text += `   • Specs: ${p.wattage}W\n`;
-      text += '\n';
+    let text = `Hello Arisca Light Studio!\n\nI'd like to discuss these ${cart.length} ${cart.length === 1 ? 'piece' : 'pieces'} and book a consultation:\n\n`;
+    cart.forEach(({ product: p }, index) => {
+      const details = [p.itemNo && `Item No. ${p.itemNo}`, p.finish, p.wattage && `${p.wattage}W`].filter(Boolean).join(' · ');
+      text += `${index + 1}. *${p.title}*${details ? `\n   ${details}` : ''}\n`;
     });
-    if (totalAmt > 0) text += `*Estimated total for priced items: ₹${totalAmt.toLocaleString('en-IN')}*\n\n`;
-    text += `Please confirm stock availability, architect trade discount, and schedule a complimentary laser site measurement for my project in Ahmedabad. Thank you!`;
-
-    return `https://wa.me/${rawNumber}?text=${encodeURIComponent(text)}`;
+    if (notes.trim()) text += `\n*Site notes:* ${notes.trim()}\n`;
+    text += `\nPlease share availability and a convenient time for a studio visit or site visit in Ahmedabad. Thank you!`;
+    return whatsappUrl(text);
   };
 
   return (
@@ -203,10 +186,12 @@ export function CartProvider({ children }) {
         cart,
         wishlist,
         addToCart,
-        updateQuantity,
+        addManyToCart,
+        cartPulse,
         removeFromCart,
         clearCart,
         toggleWishlist,
+        clearWishlist,
         isInWishlist,
         isCartOpen,
         openCart,
@@ -222,17 +207,10 @@ export function CartProvider({ children }) {
         openMobileMenu,
         closeMobileMenu,
         toggleMobileMenu,
-        activeProductModal,
-        openProductModal,
-        closeProductModal,
         activeLightbox,
         openLightbox,
         closeLightbox,
         cartTotalCount,
-        cartTotalPrice,
-        cartTotalMrp,
-        cartSavings,
-        cartOnRequestCount,
         wishlistCount,
         generateWhatsAppInquiryUrl,
         toasts,

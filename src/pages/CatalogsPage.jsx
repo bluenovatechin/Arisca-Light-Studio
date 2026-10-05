@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { ArrowRight, Download, ExternalLink, MessageCircle } from 'lucide-react';
+import { ArrowRight, Download, ExternalLink } from 'lucide-react';
+import WhatsAppIcon from '../components/WhatsAppIcon';
 import SeoHead from '../components/SeoHead';
 import { collectionCategories, useCollection } from '../data/collection';
 
@@ -84,7 +85,7 @@ export default function CatalogsPage() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <MessageCircle size={16} /> Request on WhatsApp
+                <WhatsAppIcon size={16} /> Request on WhatsApp
               </a>
               <a className="btn-pill btn-pill-ghost" href="/interior-designers">Trade programme <ArrowRight size={16} /></a>
             </div>

@@ -3,8 +3,8 @@ import { studioLocationInfo, seoFaqs } from '../data/ariscaData';
 
 export default function SeoHead({
   title = 'Arisca Light Studio | Premium Architectural Lighting & Downlights in Ahmedabad',
-  description = 'Shop luxury architectural lighting, anti-glare LOFY COB downlights, surface cylinders, and magnetic track lights in Ahmedabad. Studio prices from ₹590. Free laser site measurement and lighting consultation.',
-  keywords = 'architectural lighting ahmedabad, cob downlight price, lofy lights, surface cylinder light, living room lighting, false ceiling light ahmedabad, arisca light studio, modern chandeliers ahmedabad, jagatpur road lighting store',
+  description = 'Shop luxury architectural lighting, anti-glare LOFY COB downlights, surface cylinders, and magnetic track lights in Ahmedabad. Free laser site measurement and lighting consultation at our Jagatpur Road studio.',
+  keywords = 'architectural lighting ahmedabad, cob downlights, lofy lights, surface cylinder light, living room lighting, false ceiling light ahmedabad, arisca light studio, modern chandeliers ahmedabad, jagatpur road lighting store',
   canonicalUrl = 'https://www.ariscalightstudio.com/',
   ogImage = '/assets/branding/arisca-300-x-150-px-Awv8y3X42eTqlgJQ.png',
   schemaType = 'LightingStore',
@@ -58,7 +58,6 @@ export default function SeoHead({
       image: 'https://www.ariscalightstudio.com/assets/branding/arisca-300-x-150-px-Awv8y3X42eTqlgJQ.png',
       telephone: studioLocationInfo.phone,
       email: studioLocationInfo.email,
-      priceRange: '₹590 - ₹12,500',
       currenciesAccepted: 'INR',
       paymentAccepted: 'Cash, Credit Card, UPI, Net Banking',
       address: {
@@ -146,19 +145,6 @@ export default function SeoHead({
         brand: {
           '@type': 'Brand',
           name: productData.brand || 'LOFY'
-        },
-        offers: {
-          '@type': 'Offer',
-          url: `https://www.ariscalightstudio.com/#/product/${productData.slug}`,
-          priceCurrency: 'INR',
-          price: productData.price,
-          priceValidUntil: '2027-12-31',
-          availability: 'https://schema.org/InStock',
-          itemCondition: 'https://schema.org/NewCondition',
-          seller: {
-            '@type': 'Organization',
-            name: 'Arisca Light Studio'
-          }
         },
         aggregateRating: {
           '@type': 'AggregateRating',

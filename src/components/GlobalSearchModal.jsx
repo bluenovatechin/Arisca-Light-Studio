@@ -15,10 +15,10 @@ import {
   ExternalLink,
   FileText
 } from 'lucide-react';
-import { searchArisca, priceBrackets, coverageAreas } from '../data/ariscaData';
+import { searchArisca, coverageAreas } from '../data/ariscaData';
 import { loadCollection, studioImage } from '../data/collection';
 
-export default function GlobalSearchModal({ isOpen, onClose, onNavigate, onQuickView }) {
+export default function GlobalSearchModal({ isOpen, onClose, onNavigate }) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState({ products: [], locations: [], categories: [], catalogs: [] });
   const [collectionHits, setCollectionHits] = useState({ total: 0, items: [] });
@@ -75,7 +75,7 @@ export default function GlobalSearchModal({ isOpen, onClose, onNavigate, onQuick
     'Marble wall light',
     'Crystal',
     'Floor lamp',
-    'Under ₹1,500',
+    'Pendant',
     'Anti-glare COB',
     'Surface Cylinder'
   ];
@@ -88,11 +88,6 @@ export default function GlobalSearchModal({ isOpen, onClose, onNavigate, onQuick
   const handleSelectCategory = (catId) => {
     onClose();
     onNavigate(`/shop?category=${catId}`);
-  };
-
-  const handleSelectPrice = (bracket) => {
-    onClose();
-    onNavigate(`/shop?maxPrice=${bracket.max || 5000}&minPrice=${bracket.min || 0}`);
   };
 
   const handleSelectLocation = () => {
@@ -110,7 +105,7 @@ export default function GlobalSearchModal({ isOpen, onClose, onNavigate, onQuick
             ref={inputRef}
             type="search"
             className="search-modal-input"
-            placeholder="Search chandeliers, finishes, item numbers, or 'under 2000'…"
+            placeholder="Search chandeliers, finishes, rooms or item numbers…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -126,7 +121,7 @@ export default function GlobalSearchModal({ isOpen, onClose, onNavigate, onQuick
 
         {/* Search Body */}
         <div className="search-modal-body custom-scrollbar">
-          {/* If no query: show Popular searches, Price Brackets, and Showroom locations */}
+          {/* If no query: show popular searches and showroom locations */}
           {!query.trim() ? (
             <div className="search-defaults">
               {/* Popular Searches */}
@@ -139,29 +134,10 @@ export default function GlobalSearchModal({ isOpen, onClose, onNavigate, onQuick
                     <button
                       key={i}
                       className="popular-tag-btn"
-                      onClick={() => setQuery(term.replace('Under ₹', 'under '))}
+                      onClick={() => setQuery(term)}
                     >
                       {term}
                     </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Price Brackets Filter */}
-              <div className="search-section">
-                <div className="search-section-label">
-                  <Tag size={14} /> Shop by Studio Price Bracket
-                </div>
-                <div className="search-price-grid">
-                  {priceBrackets.map((pb) => (
-                    <div
-                      key={pb.id}
-                      className="search-price-card"
-                      onClick={() => handleSelectPrice(pb)}
-                    >
-                      <div className="sp-label">{pb.label}</div>
-                      <div className="sp-desc">{pb.description}</div>
-                    </div>
                   ))}
                 </div>
               </div>
@@ -241,13 +217,10 @@ export default function GlobalSearchModal({ isOpen, onClose, onNavigate, onQuick
                         <div className="sp-info">
                           <div className="sp-title-row">
                             <span className="sp-title">{prod.title}</span>
-                            <span className="sp-price">{prod.formattedPrice}</span>
                           </div>
                           <div className="sp-meta-row">
                             <span className="sp-badge">{prod.specs.wattage}</span>
                             <span className="sp-badge finish">{prod.finish}</span>
-                            <span className="sp-mrp">MRP {prod.formattedMrp}</span>
-                            <span className="sp-discount">{prod.discountPercent}% OFF</span>
                           </div>
                           <p className="sp-rooms">
                             Ideal for: {prod.suitableRooms.slice(0, 2).join(' • ')}
@@ -309,44 +282,11 @@ export default function GlobalSearchModal({ isOpen, onClose, onNavigate, onQuick
                 </div>
               )}
 
-              {/* Architectural PDF Catalogs Matches */}
-              {results.catalogs?.length > 0 && (
-                <div className="search-result-group">
-                  <div className="search-result-title">
-                    <BookOpen size={15} /> Architectural Lookbooks & PDF Catalogs
-                  </div>
-                  <div className="search-catalogs-grid">
-                    {results.catalogs.map((cat) => (
-                      <div
-                        key={cat.id}
-                        className="search-catalog-card"
-                        onClick={() => {
-                          onClose();
-                          onNavigate(`/collection?cat=${cat.categorySlug}`);
-                        }}
-                      >
-                        <img src={cat.coverImage} alt={cat.title} className="sc-img" />
-                        <div className="sc-info">
-                          <span className="sc-vol">{cat.volume} • {cat.pages}</span>
-                          <h4 className="sc-title">{cat.title}</h4>
-                          <p className="sc-sub">{cat.subtitle}</p>
-                          <div className="sc-actions">
-                            <span className="sc-badge">PDF ({cat.fileSize})</span>
-                            <span className="sc-link">Browse online →</span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* No results */}
-              {collectionHits.total === 0 && results.products?.length === 0 && results.locations?.length === 0 && results.categories?.length === 0 && results.catalogs?.length === 0 && (
+              {collectionHits.total === 0 && results.products?.length === 0 && results.locations?.length === 0 && results.categories?.length === 0 && (
                 <div className="search-no-results">
                   <Lightbulb size={36} className="no-res-icon" />
                   <h4>No exact matches for "{query}"</h4>
-                  <p>Try searching for wattages ("12w", "18w"), finishes ("rose gold", "black"), price ("under 2000"), or room ("living room").</p>
+                  <p>Try searching for wattages ("12w", "18w"), finishes ("rose gold", "black"), types ("chandelier") or rooms ("living room").</p>
                   <button
                     className="btn btn-secondary"
                     onClick={() => {

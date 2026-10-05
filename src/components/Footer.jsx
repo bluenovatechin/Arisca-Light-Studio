@@ -1,7 +1,8 @@
 import React from 'react';
 import { coverageAreas } from '../data/ariscaData';
 import { collectionCategories } from '../data/collection';
-import { MapPin, Phone, Mail, Clock, Instagram, Facebook, MessageCircle, ArrowUpRight } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Instagram, Facebook, ArrowUpRight } from 'lucide-react';
+import WhatsAppIcon from './WhatsAppIcon';
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -30,7 +31,7 @@ export default function Footer() {
             <div className="footer-social">
               <a href="https://www.instagram.com/arisca_light_studio" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><Instagram size={17} /></a>
               <a href="https://www.facebook.com/share/1MSMcUSAbj/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><Facebook size={17} /></a>
-              <a href="https://wa.me/919898086656" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><MessageCircle size={17} /></a>
+              <a href="https://wa.me/919898086656" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><WhatsAppIcon size={17} /></a>
             </div>
           </div>
 

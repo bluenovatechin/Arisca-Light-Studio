@@ -7,7 +7,6 @@ import {
   Calendar,
   CheckCircle2,
   Phone,
-  MessageCircle,
   MapPin,
   Clock,
   ShieldCheck,
@@ -21,6 +20,8 @@ import {
   FileText,
   AlertCircle
 } from 'lucide-react';
+import { openWhatsApp, formMessage } from '../utils/whatsapp';
+import WhatsAppIcon from '../components/WhatsAppIcon';
 
 export default function HomeConsultancyPage({ onNavigate }) {
   const { showToast } = useCart();
@@ -71,7 +72,16 @@ export default function HomeConsultancyPage({ onNavigate }) {
 
     setErrors({});
     setIsSubmitted(true);
-    showToast(`Consultation requested for ${formData.name}! Our engineer will call ${formData.phone} shortly.`);
+    openWhatsApp(formMessage('Home lighting consultation request', [
+      ['Name', formData.name],
+      ['Phone', formData.phone],
+      ['Email', formData.email],
+      ['Project', formData.projectType],
+      ['Locality', formData.locality],
+      ['Ceiling height', formData.ceilingHeight],
+      ['Preferred date', formData.preferredDate],
+      ['Message', formData.message]
+    ]));
   };
 
   const projectTypes = [
@@ -132,7 +142,7 @@ export default function HomeConsultancyPage({ onNavigate }) {
               rel="noopener noreferrer"
               className="btn btn-whatsapp btn-lg"
             >
-              <MessageCircle size={18} /> WhatsApp Quick Book
+              <WhatsAppIcon size={18} /> WhatsApp Quick Book
             </a>
           </div>
         </div>
@@ -267,10 +277,8 @@ export default function HomeConsultancyPage({ onNavigate }) {
               {isSubmitted ? (
                 <div className="form-success-box">
                   <CheckCircle2 size={48} className="gold-text" />
-                  <h3>Consultation Successfully Scheduled!</h3>
-                  <p>
-                    Thank you, <strong>{formData.name}</strong>. We will contact you at <strong>{formData.phone}</strong> within 2 hours.
-                  </p>
+                  <h3>Almost there, {formData.name}!</h3>
+                  <p>We've opened WhatsApp with your details filled in. Press send there and our team will reply shortly.</p>
                   <button
                     className="btn btn-secondary mt-3"
                     onClick={() => setIsSubmitted(false)}
@@ -401,7 +409,7 @@ export default function HomeConsultancyPage({ onNavigate }) {
                   </div>
 
                   <button type="submit" className="btn btn-primary btn-lg btn-block">
-                    <Calendar size={18} /> Request Free Consultation
+                    <WhatsAppIcon size={18} /> Request consultation on WhatsApp
                   </button>
                 </form>
               )}

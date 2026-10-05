@@ -1,10 +1,12 @@
 import React, { useMemo, useState } from 'react';
-import { ArrowRight, ArrowUpRight, ChevronDown, MapPin, Clock, Phone, MessageCircle, Ruler, PenTool, Images } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, ChevronDown, MapPin, Clock, Phone, Ruler, PenTool, Images } from 'lucide-react';
+import WhatsAppIcon from '../components/WhatsAppIcon';
 import { clientProjects, seoFaqs, clientTestimonials, enrichedProducts } from '../data/ariscaData';
 import { useCart } from '../context/CartContext';
 import SeoHead from '../components/SeoHead';
 import LightCard from '../components/LightCard';
 import LightingCalculator from '../components/LightingCalculator';
+import { tug } from '../utils/tug';
 import { useCollection, collectionCategories, coverImage } from '../data/collection';
 
 const HERO_PIECES = [
@@ -28,10 +30,20 @@ function HeroStage({ lit, onToggle }) {
           </a>
         ))}
       </div>
-      <button type="button" className="stage-cord" onClick={onToggle} aria-pressed={lit} aria-label={lit ? 'Switch the lights off' : 'Switch the lights on'}>
+      <button
+        type="button"
+        className="stage-cord"
+        onClick={(e) => { tug(e.currentTarget); onToggle(); }}
+        aria-pressed={lit}
+        aria-label={lit ? 'Switch the lights off' : 'Switch the lights on'}
+      >
         <span className="stage-cord-line" />
         <span className="stage-cord-bead" />
-        <span className="stage-cord-hint">{lit ? 'Lights off' : 'Pull me'}</span>
+        {/* Both hints stay rendered and cross-fade, so the cord never shifts */}
+        <span className="stage-cord-hint" aria-hidden="true">
+          <span className="hint-off">Pull me</span>
+          <span className="hint-on">Lights off</span>
+        </span>
       </button>
     </div>
   );
@@ -178,7 +190,7 @@ export default function HomePage({ onNavigate }) {
         <div className="container">
           <div className="section-head-row">
             <div>
-              <p className="eyebrow"><span className="eyebrow-lines" aria-hidden="true" />Beyond the catalog</p>
+              <p className="eyebrow"><span className="eyebrow-lines" aria-hidden="true" />Beyond the showroom</p>
               <h2 className="section-heading">We help you get it right.</h2>
             </div>
           </div>
@@ -250,7 +262,7 @@ export default function HomePage({ onNavigate }) {
               </ul>
               <div className="hero-v2-cta">
                 <button type="button" className="btn-pill btn-pill-solid" onClick={openConsultModal}>Book a visit</button>
-                <a className="btn-pill btn-pill-wa" href="https://wa.me/919898086656" target="_blank" rel="noopener noreferrer"><MessageCircle size={16} /> WhatsApp</a>
+                <a className="btn-pill btn-pill-wa" href="https://wa.me/919898086656" target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={16} /> WhatsApp</a>
                 <a className="btn-pill btn-pill-ghost" href="https://maps.google.com/?q=Arisca+Light+Studio+Ahmedabad" target="_blank" rel="noopener noreferrer">Directions <ArrowUpRight size={16} /></a>
               </div>
             </div>

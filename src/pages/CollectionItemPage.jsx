@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { ArrowLeft, ArrowRight, Heart, MessageCircle, Plus, Check, FileText, MoveHorizontal } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Heart, Plus, Check, MoveHorizontal } from 'lucide-react';
+import WhatsAppIcon from '../components/WhatsAppIcon';
 import SeoHead from '../components/SeoHead';
 import LightCard, { FINISH_SWATCH } from '../components/LightCard';
 import ScaleFigure from '../components/ScaleFigure';
@@ -70,7 +71,7 @@ export default function CollectionItemPage({ id, onNavigate }) {
     return (
       <div className="container item-page coll-empty">
         <h1>We couldn't find that piece.</h1>
-        <p>It may have moved to a new catalog. Browse the full collection instead.</p>
+        <p>It may have moved. Browse the full collection instead.</p>
         <a className="btn-pill" href="/collection">Back to the collection</a>
       </div>
     );
@@ -79,7 +80,6 @@ export default function CollectionItemPage({ id, onNavigate }) {
   const category = categoryByKey[item.cat];
   const saved = isInWishlist(item.id);
   const inBasket = cart.some((c) => c.product.id === item.id);
-  const page = Number(item.id.split('-').pop());
 
   const specs = [
     ['Item No.', item.no],
@@ -136,7 +136,7 @@ export default function CollectionItemPage({ id, onNavigate }) {
                 {inBasket ? <Check size={17} /> : <Plus size={17} />} {inBasket ? 'In your inquiry basket' : 'Add to inquiry basket'}
               </button>
               <a className="btn-pill btn-pill-wa" href={whatsappLinkFor(item)} target="_blank" rel="noopener noreferrer">
-                <MessageCircle size={17} /> Ask on WhatsApp
+                <WhatsAppIcon size={17} /> Ask on WhatsApp
               </a>
               <button
                 type="button"
@@ -175,13 +175,6 @@ export default function CollectionItemPage({ id, onNavigate }) {
               </div>
             )}
 
-            <a className="item-catalog-link" href={`${category.pdf}#page=${page}`} target="_blank" rel="noopener noreferrer">
-              <FileText size={16} />
-              <span>
-                Page {page} of the {category.label} catalog
-                <small>PDF · {category.pdfSize}</small>
-              </span>
-            </a>
           </div>
         </div>
 
@@ -190,7 +183,7 @@ export default function CollectionItemPage({ id, onNavigate }) {
             <div>
               <p className="eyebrow"><span className="eyebrow-lines" aria-hidden="true" />Scale</p>
               <h2 className="section-heading">How big is it, really?</h2>
-              <p className="lede">Catalog photos flatter. Here is the {item.type.toLowerCase()} beside a person, so you can picture it over your table or beside your bed.</p>
+              <p className="lede">Photos can mislead on size. Here is the {item.type.toLowerCase()} beside a person, so you can picture it over your table or beside your bed.</p>
             </div>
             <ScaleFigure type={item.type} dims={item.dims} />
           </section>

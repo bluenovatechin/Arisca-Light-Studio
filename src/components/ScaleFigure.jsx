@@ -67,7 +67,7 @@ export default function ScaleFigure({ type, dims }) {
         <line x1={fixtureX + width + 70} x2={fixtureX + width + 70} y1={y(top)} y2={y(top - body)} className="sf-dim" />
         <text x={fixtureX + width + 110} y={y(top - body / 2) + 30} className="sf-label">{label(body)}</text>
       </svg>
-      <figcaption>Drawn to scale against a 1.75 m person{hanging ? ' under a 2.9 m ceiling' : ''}. Sizes from the catalog.</figcaption>
+      <figcaption>Drawn to scale against a 1.75 m person{hanging ? ' under a 2.9 m ceiling' : ''}. Sizes are approximate.</figcaption>
     </figure>
   );
 }

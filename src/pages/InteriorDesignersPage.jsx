@@ -9,13 +9,14 @@ import {
   Users,
   CheckCircle2,
   FileText,
-  MessageCircle,
   Phone,
   ShieldCheck,
   Award,
   ArrowRight,
   AlertCircle
 } from 'lucide-react';
+import { openWhatsApp, formMessage } from '../utils/whatsapp';
+import WhatsAppIcon from '../components/WhatsAppIcon';
 
 export default function InteriorDesignersPage() {
   const { showToast } = useCart();
@@ -64,7 +65,14 @@ export default function InteriorDesignersPage() {
 
     setErrors({});
     setIsSubmitted(true);
-    showToast(`Thank you, ${formData.name}! ${formData.studio} has been registered for trade privileges. Our partnership manager will reach out.`);
+    openWhatsApp(formMessage('Trade partner application', [
+      ['Name', formData.name],
+      ['Studio / firm', formData.studio],
+      ['Phone', formData.phone],
+      ['Email', formData.email],
+      ['Portfolio', formData.portfolio],
+      ['Project needs', formData.projectNeeds]
+    ]));
   };
 
   return (
@@ -178,20 +186,15 @@ export default function InteriorDesignersPage() {
               </span>
               <h2>Register as an Arisca Trade Partner</h2>
               <p>
-                Fill out the application below to receive our digital Trade Catalog, wholesale price list, and schedule a private showroom walkthrough.
+                Fill out the application below to receive our digital Trade Catalog and schedule a private showroom walkthrough with our team.
               </p>
             </div>
 
             {isSubmitted ? (
               <div className="form-success-box text-center">
                 <CheckCircle2 size={54} className="gold-text mx-auto" />
-                <h3>Trade Application Received!</h3>
-                <p>
-                  Thank you, <strong>{formData.name}</strong> from <strong>{formData.studio}</strong>.
-                </p>
-                <p className="success-subtext">
-                  Our Trade Partnership Lead (Dev Patel) will contact you at <strong>{formData.phone}</strong> and email the digital trade lookbook.
-                </p>
+                <h3>Almost there, {formData.name}!</h3>
+                <p className="success-subtext">We've opened WhatsApp with your details filled in. Press send there and our team will reply shortly.</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="trade-form" noValidate>
@@ -302,7 +305,7 @@ export default function InteriorDesignersPage() {
                 </div>
 
                 <button type="submit" className="btn btn-primary btn-lg btn-block">
-                  <Sparkles size={18} /> Submit Trade Partnership Application
+                  <WhatsAppIcon size={18} /> Send application on WhatsApp
                 </button>
               </form>
             )}
@@ -315,7 +318,7 @@ export default function InteriorDesignersPage() {
                 rel="noopener noreferrer"
                 className="trade-direct-link"
               >
-                <MessageCircle size={16} /> WhatsApp Trade Desk Direct
+                <WhatsAppIcon size={16} /> WhatsApp Trade Desk Direct
               </a>
             </div>
           </div>

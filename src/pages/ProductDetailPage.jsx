@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import NotFoundPage from './NotFoundPage';
+import WhatsAppIcon from '../components/WhatsAppIcon';
+import { openWhatsApp } from '../utils/whatsapp';
 import { enrichedProducts, studioLocationInfo } from '../data/ariscaData';
 import { useCart } from '../context/CartContext';
 import ProductCard from '../components/ProductCard';
@@ -7,7 +10,6 @@ import {
   ChevronRight,
   Heart,
   ShoppingBag,
-  MessageCircle,
   Calendar,
   ShieldCheck,
   Check,
@@ -15,9 +17,8 @@ import {
   Layers,
   Award,
   ArrowLeft,
+  ArrowRight,
   Share2,
-  Plus,
-  Minus,
   Star,
   MapPin,
   Truck,
@@ -33,11 +34,10 @@ export default function ProductDetailPage({ slug, onNavigate }) {
     showToast
   } = useCart();
 
-  const [quantity, setQuantity] = useState(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
-  // Find product by slug
-  const product = enrichedProducts.find((p) => p.slug === slug) || enrichedProducts[0];
+  const product = enrichedProducts.find((p) => p.slug === slug);
+  if (!product) return <NotFoundPage onNavigate={onNavigate} />;
 
   const isFavorited = isInWishlist(product.id);
   const images = product.images && product.images.length > 0
@@ -45,22 +45,18 @@ export default function ProductDetailPage({ slug, onNavigate }) {
     : [{ url: product.thumbnail }];
   const currentImg = images[selectedImageIndex]?.url || product.thumbnail;
 
-  const itemPrice = product.price || 1450;
-  const calculatedSubtotal = itemPrice * quantity;
-
   // Related products
   const relatedProducts = enrichedProducts
     .filter((p) => p.id !== product.id && (p.wattage === product.wattage || p.categoryKey === product.categoryKey))
     .slice(0, 4);
 
   const handleAddToCart = () => {
-    addToCart(product, quantity);
+    addToCart(product);
   };
 
   const handleWhatsApp = () => {
-    const rawNumber = '9898086656';
-    const text = `Hello Arisca Light Studio! 🌟\n\nI am inquiring about *${product.title}*:\n• Quantity: ${quantity} units @ ₹${itemPrice.toLocaleString('en-IN')}\n• Subtotal: ₹${calculatedSubtotal.toLocaleString('en-IN')}\n• Finish: ${product.finish || 'Dual Tone'}\n• Wattage: ${product.wattage ? product.wattage + 'W' : '12W'}\n\nPlease confirm availability and arrange on-site laser measurement in Ahmedabad.\n\nProduct Link: https://www.ariscalightstudio.com/#/product/${product.slug}`;
-    window.open(`https://wa.me/${rawNumber}?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+    const text = `Hello Arisca Light Studio!\n\nI'd like to know more about *${product.title}*:\n• Finish: ${product.finish || 'Dual Tone'}\n• Wattage: ${product.wattage ? product.wattage + 'W' : '—'}\n\nPlease share availability and arrange an on-site visit in Ahmedabad.\n\nProduct link: https://www.ariscalightstudio.com/product/${product.slug}`;
+    openWhatsApp(text);
   };
 
   const handleShare = () => {
@@ -80,10 +76,10 @@ export default function ProductDetailPage({ slug, onNavigate }) {
     <div className="product-detail-page-wrapper light-theme-detail">
       {/* Maximum SEO for Google Product Rich Snippets */}
       <SeoHead
-        title={`${product.title} Price & Specs | Arisca Light Studio Ahmedabad`}
-        description={`Buy ${product.title} (${product.finish}) at studio price ${product.formattedPrice}. Genuine ${product.wattage}W high-CRI anti-glare architectural lighting fixture. Includes 2-year warranty and free laser measurement in Ahmedabad.`}
-        keywords={`${product.title} price, ${product.title} ahmedabad, ${product.wattage}w downlight price, cob downlight ahmedabad`}
-        canonicalUrl={`https://www.ariscalightstudio.com/#/product/${product.slug}`}
+        title={`${product.title} | Specs & Finishes | Arisca Light Studio Ahmedabad`}
+        description={`${product.title} (${product.finish}): ${product.wattage}W high-CRI anti-glare architectural downlight with a 2-year studio warranty. See it lit at our Ahmedabad studio.`}
+        keywords={`${product.title}, ${product.title} ahmedabad, ${product.wattage}w downlight, cob downlight ahmedabad`}
+        canonicalUrl={`https://www.ariscalightstudio.com/product/${product.slug}`}
         ogImage={product.thumbnail}
         schemaType="Product"
         productData={product}
@@ -115,11 +111,6 @@ export default function ProductDetailPage({ slug, onNavigate }) {
                 className="detail-main-img"
               />
               <div className="detail-floating-badges">
-                {product.discountPercent > 0 && (
-                  <span className="detail-discount-badge">
-                    -{product.discountPercent}% OFF
-                  </span>
-                )}
                 {product.ribbon && (
                   <span className="product-ribbon">
                     <Sparkles size={12} /> {product.ribbon}
@@ -180,68 +171,10 @@ export default function ProductDetailPage({ slug, onNavigate }) {
               )}
             </div>
 
-            {/* Pricing Card with MRP & Bulk Discount Tiers */}
-            <div className="detail-pricing-box">
-              <div className="detail-price-line">
-                <span className="detail-current-price">{product.formattedPrice}</span>
-                {product.mrp && product.mrp > product.price && (
-                  <span className="detail-mrp-price">{product.formattedMrp}</span>
-                )}
-                {product.discountPercent > 0 && (
-                  <span className="detail-discount-tag">Save {product.discountPercent}%</span>
-                )}
-              </div>
-              <span className="detail-tax-note">Inclusive of all taxes • Free laser site survey in Ahmedabad</span>
-
-              {/* Bulk Tier Discounts */}
-              <div className="bulk-tiers-grid">
-                <div className={`tier-card ${quantity < 10 ? 'selected' : ''}`}>
-                  <span className="tier-qty">1 – 9 Units</span>
-                  <strong className="tier-price">₹{itemPrice.toLocaleString('en-IN')} / unit</strong>
-                  <span className="tier-save">Standard Studio Price</span>
-                </div>
-                <div className={`tier-card ${quantity >= 10 && quantity < 25 ? 'selected' : ''}`}>
-                  <span className="tier-qty">10 – 24 Units</span>
-                  <strong className="tier-price">₹{Math.round(itemPrice * 0.95).toLocaleString('en-IN')} / unit</strong>
-                  <span className="tier-save">Extra 5% Home Discount</span>
-                </div>
-                <div className={`tier-card ${quantity >= 25 ? 'selected' : ''}`}>
-                  <span className="tier-qty">25+ Units</span>
-                  <strong className="tier-price">₹{Math.round(itemPrice * 0.90).toLocaleString('en-IN')} / unit</strong>
-                  <span className="tier-save">10% Trade / Architect</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Quantity Selector & Order Subtotal */}
             <div className="detail-actions-card">
-              <div className="qty-subtotal-row">
-                <div className="qty-selector-group">
-                  <label htmlFor="detail-qty-val">Quantity:</label>
-                  <div className="quantity-controls large-qty">
-                    <button
-                      className="qty-btn"
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      aria-label="Decrease quantity"
-                    >
-                      <Minus size={16} />
-                    </button>
-                    <span id="detail-qty-val" className="qty-value">{quantity}</span>
-                    <button
-                      className="qty-btn"
-                      onClick={() => setQuantity(quantity + 1)}
-                      aria-label="Increase quantity"
-                    >
-                      <Plus size={16} />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="calculated-subtotal-block">
-                  <span className="subtotal-label">Subtotal ({quantity} fixtures):</span>
-                  <strong className="subtotal-amount">₹{calculatedSubtotal.toLocaleString('en-IN')}</strong>
-                </div>
-              </div>
+              <p className="detail-booking-note">
+                Pricing is shared after a short consultation with our lighting team. Add this to your inquiry or message us directly.
+              </p>
 
               {/* Action Buttons */}
               <div className="detail-action-buttons-grid">
@@ -249,14 +182,14 @@ export default function ProductDetailPage({ slug, onNavigate }) {
                   className="btn btn-primary btn-lg"
                   onClick={handleAddToCart}
                 >
-                  <ShoppingBag size={18} /> Add to Inquiry Basket
+                  <ShoppingBag size={18} /> Add to inquiry
                 </button>
 
                 <button
                   className="btn btn-whatsapp btn-lg"
                   onClick={handleWhatsApp}
                 >
-                  <MessageCircle size={18} /> Instant WhatsApp Order
+                  <WhatsAppIcon size={18} /> Ask on WhatsApp
                 </button>
               </div>
 
@@ -375,7 +308,7 @@ export default function ProductDetailPage({ slug, onNavigate }) {
                 className="btn btn-secondary view-all-btn"
                 onClick={() => onNavigate('/shop')}
               >
-                View Full Catalog <ArrowRight size={16} />
+                View all downlights <ArrowRight size={16} />
               </button>
             </div>
 

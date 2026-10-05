@@ -60,8 +60,8 @@ export default function TermsPage({ onNavigate }) {
               <section id="estimates-pricing" className="legal-section-block">
                 <h2>2. Quotations, Pricing & Catalog Items</h2>
                 <ul>
-                  <li><strong>Price Display:</strong> Prices displayed for LOFY architectural downlights are direct studio rates inclusive of Goods and Services Tax (GST) unless explicitly noted otherwise.</li>
-                  <li><strong>Custom & Bespoke Pieces:</strong> High-end crystal chandeliers, custom brass suspensions, and bespoke track profiles are marked as <em>"Price on Request"</em> and quoted individually based on customized dimensions and finish options.</li>
+                  <li><strong>Pricing:</strong> Prices are not listed on this website. Every quotation is prepared by our lighting team after a consultation, based on the fixtures, finishes and quantities your project needs.</li>
+                  <li><strong>Custom & Bespoke Pieces:</strong> High-end crystal chandeliers, custom brass suspensions, and bespoke track profiles are quoted individually based on customized dimensions and finish options.</li>
                   <li><strong>Quotation Validity:</strong> Formal proforma invoices and trade quotes issued by our studio remain valid for 30 calendar days from the date of issuance.</li>
                 </ul>
               </section>

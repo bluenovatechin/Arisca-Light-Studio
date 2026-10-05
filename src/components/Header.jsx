@@ -7,12 +7,14 @@ import {
   ShoppingBag,
   Heart,
   Phone,
-  MessageCircle,
   Search,
   ChevronDown,
   ArrowRight,
-  MapPin
+  MapPin,
+  Home,
+  Compass
 } from 'lucide-react';
+import WhatsAppIcon from './WhatsAppIcon';
 
 const LOGO = '/assets/branding/arisca-300-x-150-px-Awv8y3X42eTqlgJQ.png';
 
@@ -59,13 +61,31 @@ export default function Header({ currentRoute, routeQuery, onNavigate }) {
     openConsultModal,
     isMobileMenuOpen,
     openMobileMenu,
-    closeMobileMenu
+    closeMobileMenu,
+    cartPulse
   } = useCart();
   const [openMenu, setOpenMenu] = useState(null);
   const [scrolled, setScrolled] = useState(false);
+  const [pulsing, setPulsing] = useState(false);
   const navRef = useRef(null);
   const hoverTimer = useRef(null);
   const active = sectionFor(currentRoute);
+
+  // Basket icon "catches" each added item
+  useEffect(() => {
+    if (!cartPulse) return undefined;
+    setPulsing(false);
+    const raf = requestAnimationFrame(() => setPulsing(true));
+    const t = setTimeout(() => setPulsing(false), 700);
+    return () => { cancelAnimationFrame(raf); clearTimeout(t); };
+  }, [cartPulse]);
+
+  const quickLinks = [
+    { label: 'Home', icon: Home, href: '/', on: currentRoute === '/' || currentRoute === '/home' },
+    { label: 'Collection', icon: Compass, href: '/collection', on: active === 'collection' },
+    { label: 'Saved', icon: Heart, href: '/wishlist', on: currentRoute === '/wishlist', count: wishlistCount },
+    { label: 'Basket', icon: ShoppingBag, onClick: () => { closeMobileMenu(); openCart(); }, count: cartTotalCount }
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -132,7 +152,7 @@ export default function Header({ currentRoute, routeQuery, onNavigate }) {
           <span className="topline-links">
             <a href="tel:+919898086656"><Phone size={13} aria-hidden="true" /> +91 98980 86656</a>
             <a href="https://wa.me/919898086656" target="_blank" rel="noopener noreferrer">
-              <MessageCircle size={13} aria-hidden="true" /> WhatsApp
+              <WhatsAppIcon size={13} aria-hidden="true" /> WhatsApp
             </a>
           </span>
         </div>
@@ -233,9 +253,9 @@ export default function Header({ currentRoute, routeQuery, onNavigate }) {
               <Heart size={19} />
               {wishlistCount > 0 && <span className="tool-badge">{wishlistCount}</span>}
             </a>
-            <button type="button" className="tool-btn" onClick={openCart} aria-label={`Inquiry basket (${cartTotalCount})`}>
+            <button type="button" className={`tool-btn ${pulsing ? 'is-pulsing' : ''}`} onClick={openCart} aria-label={`Inquiry basket (${cartTotalCount})`}>
               <ShoppingBag size={19} />
-              {cartTotalCount > 0 && <span className="tool-badge">{cartTotalCount}</span>}
+              {cartTotalCount > 0 && <span className="tool-badge" key={cartTotalCount}>{cartTotalCount}</span>}
             </button>
             <button type="button" className="btn-pill btn-pill-solid header-cta" onClick={openConsultModal}>
               Book a visit
@@ -267,6 +287,35 @@ export default function Header({ currentRoute, routeQuery, onNavigate }) {
             <Search size={16} /> Search lights, finishes, item numbers…
           </button>
 
+          <nav className="sheet-quick" aria-label="Quick links">
+            {quickLinks.map(({ label, icon: Icon, href, on, count, onClick }) => {
+              const inner = (
+                <>
+                  <span className="sheet-quick-icon">
+                    <Icon size={20} strokeWidth={1.7} />
+                    {count > 0 && <span className="sheet-quick-badge">{count}</span>}
+                  </span>
+                  <span>{label}</span>
+                </>
+              );
+              return href ? (
+                <a
+                  key={label}
+                  href={href}
+                  className={`sheet-quick-item ${on ? 'is-active' : ''}`}
+                  aria-current={on ? 'page' : undefined}
+                  onClick={(e) => { e.preventDefault(); go(href); }}
+                >
+                  {inner}
+                </a>
+              ) : (
+                <button key={label} type="button" className="sheet-quick-item" onClick={onClick}>
+                  {inner}
+                </button>
+              );
+            })}
+          </nav>
+
           <div className="sheet-body">
             <p className="sheet-label">The Collection</p>
             <div className="sheet-cats">
@@ -281,7 +330,9 @@ export default function Header({ currentRoute, routeQuery, onNavigate }) {
               </a>
             </div>
 
+            <p className="sheet-label">Explore</p>
             <ul className="sheet-links">
+              <li><a href="/" className={currentRoute === '/' ? 'is-active' : ''} onClick={(e) => { e.preventDefault(); go('/'); }}>Home</a></li>
               <li><a href="/shop" className={active === 'downlights' ? 'is-active' : ''} onClick={(e) => { e.preventDefault(); go('/shop'); }}>Architectural downlights</a></li>
               <li><a href="/catalogs" className={active === 'catalogs' ? 'is-active' : ''} onClick={(e) => { e.preventDefault(); go('/catalogs'); }}>PDF catalogs</a></li>
               <li><a href="/client-diaries" className={active === 'projects' ? 'is-active' : ''} onClick={(e) => { e.preventDefault(); go('/client-diaries'); }}>Client projects</a></li>
@@ -299,7 +350,7 @@ export default function Header({ currentRoute, routeQuery, onNavigate }) {
               Book a studio visit
             </button>
             <a className="btn-pill btn-pill-wa" href="https://wa.me/919898086656" target="_blank" rel="noopener noreferrer">
-              <MessageCircle size={16} /> WhatsApp us
+              <WhatsAppIcon size={16} /> WhatsApp us
             </a>
           </div>
         </aside>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
-import { X, Calendar, MessageCircle } from 'lucide-react';
+import { X, Calendar } from 'lucide-react';
+import WhatsAppIcon from './WhatsAppIcon';
 
 export default function LightboxModal() {
   const { activeLightbox, closeLightbox, openConsultModal } = useCart();
@@ -47,7 +48,7 @@ export default function LightboxModal() {
               <Calendar size={14} /> Book Similar Design
             </button>
             <button className="btn btn-whatsapp btn-sm" onClick={handleWhatsApp}>
-              <MessageCircle size={14} /> WhatsApp Inquiry
+              <WhatsAppIcon size={14} /> WhatsApp Inquiry
             </button>
           </div>
         </div>

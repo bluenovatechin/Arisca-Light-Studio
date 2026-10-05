@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Search, X, SlidersHorizontal, ChevronDown } from 'lucide-react';
 import SeoHead from '../components/SeoHead';
 import LightCard from '../components/LightCard';
+import { tug } from '../utils/tug';
 import {
   useCollection,
   collectionCategories,
@@ -13,7 +14,7 @@ import {
 const PAGE = 36;
 
 const SORTS = {
-  catalog: { label: 'Catalog order', fn: null },
+  catalog: { label: 'Featured', fn: null },
   large: { label: 'Largest first', fn: (a, b) => size(b) - size(a) },
   small: { label: 'Smallest first', fn: (a, b) => size(a) - size(b) },
   no: { label: 'Item number', fn: (a, b) => a.no.localeCompare(b.no, undefined, { numeric: true }) }
@@ -114,7 +115,7 @@ export default function CollectionPage({ query = '', onNavigate }) {
     <div className={`coll-page ${lightsOn ? 'lights-on' : ''}`}>
       <SeoHead
         title={`${category ? category.label : 'The Collection'} | Arisca Light Studio Ahmedabad`}
-        description={`Browse ${items ? (category ? counts[cat] : items.length) : 'over a thousand'} designer ${category ? category.label.toLowerCase() : 'chandeliers, pendants, wall lights and lamps'} from the Lofy catalogs at Arisca Light Studio, Ahmedabad.`}
+        description={`Browse ${items ? (category ? counts[cat] : items.length) : 'over a thousand'} designer ${category ? category.label.toLowerCase() : 'chandeliers, pendants, wall lights and lamps'} at Arisca Light Studio, Ahmedabad.`}
         canonicalUrl={`https://www.ariscalightstudio.com/collection${cat ? `?cat=${cat}` : ''}`}
       />
 
@@ -127,7 +128,7 @@ export default function CollectionPage({ query = '', onNavigate }) {
             </p>
             <h1 className="display-title">
               {category ? category.label : (
-                <>Every light, <em>from every catalog.</em></>
+                <>Every light, <em>in one place.</em></>
               )}
             </h1>
             <p className="lede">
@@ -140,15 +141,26 @@ export default function CollectionPage({ query = '', onNavigate }) {
           <button
             type="button"
             className={`pull-switch ${lightsOn ? 'is-on' : ''}`}
-            onClick={() => update({ lights: lightsOn ? '' : 'on' })}
+            onClick={(e) => {
+              tug(e.currentTarget);
+              update({ lights: lightsOn ? '' : 'on' });
+            }}
             aria-pressed={lightsOn}
+            aria-label={lightsOn ? 'Switch the room view off' : 'Switch the room view on'}
           >
             <span className="pull-switch-cord" aria-hidden="true">
               <span className="pull-switch-bead" />
             </span>
-            <span className="pull-switch-text">
-              <strong>{lightsOn ? 'Lights on' : 'Lights off'}</strong>
-              <span>{lightsOn ? 'Showing every piece in a room' : 'Pull to see every piece in a room'}</span>
+            {/* Both states are always rendered and cross-faded, so nothing shifts while switching */}
+            <span className="pull-switch-text" aria-hidden="true">
+              <span className="ps-state ps-off">
+                <strong>Lights off</strong>
+                <span>Pull to see every piece in a room</span>
+              </span>
+              <span className="ps-state ps-on">
+                <strong>Lights on</strong>
+                <span>Every piece, shown in a room</span>
+              </span>
             </span>
           </button>
         </div>
@@ -207,7 +219,7 @@ export default function CollectionPage({ query = '', onNavigate }) {
               options={[{ value: 'led', label: 'Integrated LED' }, { value: 'bulb', label: 'Bulb (E27 / E14 / G9)' }]}
             />
             <Select
-              label="Sort: Catalog order"
+              label="Sort: Featured"
               value={sort === 'catalog' ? '' : sort}
               onChange={(v) => update({ sort: v })}
               options={Object.entries(SORTS).filter(([k]) => k !== 'catalog').map(([value, s]) => ({ value, label: `Sort: ${s.label}` }))}
@@ -242,7 +254,7 @@ export default function CollectionPage({ query = '', onNavigate }) {
         ) : results.length === 0 ? (
           <div className="coll-empty">
             <h2>Nothing matches — yet.</h2>
-            <p>Try a different finish or material, or ask us: we source pieces beyond the catalogs too.</p>
+            <p>Try a different finish or material, or ask us: we source many more pieces than you see here.</p>
             <button
               className="btn-pill"
               onClick={() => { setSearchText(''); update({ type: '', finish: '', material: '', source: '', q: '' }); }}

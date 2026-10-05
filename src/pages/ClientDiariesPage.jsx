@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { clientProjects } from '../data/ariscaData';
 import { useCart } from '../context/CartContext';
 import SeoHead from '../components/SeoHead';
@@ -6,7 +6,6 @@ import {
   Sparkles,
   Eye,
   Calendar,
-  MessageCircle,
   MapPin,
   Camera,
   Layers,
@@ -18,13 +17,107 @@ import {
   Sliders,
   X,
   Maximize2,
-  Maximize
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
+import WhatsAppIcon from '../components/WhatsAppIcon';
+import { openWhatsApp } from '../utils/whatsapp';
+
+/**
+ * Project viewer: the photo stays pinned (top on phones, left on desktop)
+ * while only the details scroll. Arrow keys / buttons step through projects.
+ */
+function ProjectSheet({ projects, index, onIndex, onClose, onBook, onFullscreen }) {
+  const proj = projects[index];
+  const count = projects.length;
+  const step = (d) => onIndex((index + d + count) % count);
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowRight') step(1);
+      if (e.key === 'ArrowLeft') step(-1);
+    };
+    document.addEventListener('keydown', onKey);
+    document.body.classList.add('no-scroll');
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.classList.remove('no-scroll');
+    };
+  });
+
+  const specs = [
+    ['Colour temperature', proj.colorTemp || '3000K warm white'],
+    ['Colour rendering', proj.cri || 'Ra > 92'],
+    ['Light level', proj.luxLevel || '200 – 350 lux'],
+    ['Ceiling height', proj.ceilingHeight || '10.5 ft'],
+    ['Beam spread', proj.beamAngle || '24° / 36°'],
+    ['Glare control', 'UGR < 19, deep recessed']
+  ];
+
+  return (
+    <div className="pj" role="dialog" aria-modal="true" aria-labelledby="pj-title">
+      <div className="pj-backdrop" onClick={onClose} />
+      <div className="pj-sheet">
+        <figure className="pj-media" key={proj.id}>
+          <img src={proj.url} alt={proj.title} />
+          <figcaption className="pj-media-bar">
+            <span className="pj-count">{index + 1} / {count}</span>
+            <span className="pj-media-actions">
+              <button type="button" onClick={() => step(-1)} aria-label="Previous project"><ChevronLeft size={18} /></button>
+              <button type="button" onClick={() => step(1)} aria-label="Next project"><ChevronRight size={18} /></button>
+              <button type="button" onClick={() => onFullscreen(proj)} aria-label="View photo fullscreen"><Maximize2 size={16} /></button>
+            </span>
+          </figcaption>
+        </figure>
+
+        <div className="pj-body" key={`b-${proj.id}`}>
+          <button type="button" className="pj-close" onClick={onClose} aria-label="Close project">
+            <X size={20} />
+          </button>
+          <p className="eyebrow"><span className="eyebrow-lines" aria-hidden="true" />{proj.categoryLabel}</p>
+          <h2 id="pj-title" className="pj-title">{proj.title}</h2>
+          <p className="pj-loc"><MapPin size={14} aria-hidden="true" /> {proj.location}{proj.scope ? ` · ${proj.scope}` : ''}</p>
+          <p className="pj-intent">{proj.designIntent || proj.description}</p>
+
+          <h3 className="pj-subhead">The lighting</h3>
+          <dl className="pj-specs">
+            {specs.map(([k, v]) => (
+              <div key={k}><dt>{k}</dt><dd>{v}</dd></div>
+            ))}
+          </dl>
+
+          {proj.fixtures?.length > 0 && (
+            <>
+              <h3 className="pj-subhead">What we installed</h3>
+              <ul className="pj-fixtures">
+                {proj.fixtures.map((f) => <li key={f}><CheckCircle2 size={15} aria-hidden="true" /> {f}</li>)}
+              </ul>
+            </>
+          )}
+
+          <div className="pj-actions">
+            <button
+              type="button"
+              className="btn-pill pj-wa"
+              onClick={() => openWhatsApp(`Hello Arisca, I saw "${proj.title}" (${proj.location}) on your website and would like a similar lighting design for my space.`)}
+            >
+              <WhatsAppIcon size={18} /> I'd like something similar
+            </button>
+            <button type="button" className="btn-pill btn-pill-solid" onClick={onBook}>
+              <Calendar size={17} /> Book a visit
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function ClientDiariesPage({ onNavigate }) {
   const { openLightbox, openConsultModal } = useCart();
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [inspectingProject, setInspectingProject] = useState(null);
+  const [openIndex, setOpenIndex] = useState(null);
 
   const categories = [
     { id: 'all', label: 'All Projects', count: clientProjects.length },
@@ -109,11 +202,11 @@ export default function ClientDiariesPage({ onNavigate }) {
 
           {/* Projects Grid */}
           <div className="diaries-grid">
-            {filteredProjects.map((proj) => (
+            {filteredProjects.map((proj, idx) => (
               <article
                 key={proj.id}
                 className="diaries-card"
-                onClick={() => setInspectingProject(proj)}
+                onClick={() => setOpenIndex(idx)}
               >
                 <div className="diaries-img-wrap">
                   <img
@@ -131,7 +224,7 @@ export default function ClientDiariesPage({ onNavigate }) {
                       <div className="diaries-eye-btn">
                         <Eye size={22} />
                       </div>
-                      <span className="diaries-view-text">Click to Inspect Lighting Specs</span>
+                      <span className="diaries-view-text">View project</span>
                     </div>
                   </div>
                 </div>
@@ -146,17 +239,17 @@ export default function ClientDiariesPage({ onNavigate }) {
 
                   <div className="diaries-card-footer">
                     <span className="diaries-view-link">
-                      Inspect Details <ArrowRight size={13} />
+                      View project <ArrowRight size={13} />
                     </span>
                     <button
                       type="button"
                       className="diaries-inquire-btn"
                       onClick={(e) => {
                         e.stopPropagation();
-                        window.open(`https://wa.me/919898086656?text=${encodeURIComponent(`Hello Arisca, I saw the ${proj.title} in your Client Diaries (${proj.location}) and would like a similar lighting design for my home.`)}`, '_blank', 'noopener,noreferrer');
+                        openWhatsApp(`Hello Arisca, I saw the ${proj.title} in your Client Diaries (${proj.location}) and would like a similar lighting design for my home.`);
                       }}
                     >
-                      <MessageCircle size={13} /> Inquire This Look
+                      <WhatsAppIcon size={13} /> Inquire This Look
                     </button>
                   </div>
                 </div>
@@ -186,7 +279,7 @@ export default function ClientDiariesPage({ onNavigate }) {
                   rel="noopener noreferrer"
                   className="btn btn-whatsapp btn-lg"
                 >
-                  <MessageCircle size={18} /> WhatsApp Lighting Desk
+                  <WhatsAppIcon size={18} /> WhatsApp Lighting Desk
                 </a>
               </div>
             </div>
@@ -194,146 +287,15 @@ export default function ClientDiariesPage({ onNavigate }) {
         </div>
       </section>
 
-      {/* Architectural Project Details Inspection Modal */}
-      {inspectingProject && (
-        <div className="modal-backdrop" onClick={() => setInspectingProject(null)}>
-          <div
-            className="modal-container project-inspect-modal"
-            onClick={(e) => e.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="inspect-project-title"
-          >
-            <button
-              className="modal-close-btn"
-              onClick={() => setInspectingProject(null)}
-              aria-label="Close project specifications"
-            >
-              <X size={20} />
-            </button>
-
-            <div className="project-inspect-grid">
-              <div className="project-inspect-media">
-                <div className="inspect-img-box">
-                  <img
-                    src={inspectingProject.url}
-                    alt={inspectingProject.title}
-                    className="inspect-img"
-                  />
-                  <button
-                    className="inspect-lightbox-btn"
-                    onClick={() => {
-                      const proj = inspectingProject;
-                      setInspectingProject(null);
-                      openLightbox(proj.url, `${proj.title} • ${proj.location}`);
-                    }}
-                    title="Expand Fullscreen Photo"
-                  >
-                    <Maximize2 size={16} /> Fullscreen
-                  </button>
-                </div>
-                <div className="inspect-media-badges">
-                  <span className="section-badge">
-                    <MapPin size={13} /> {inspectingProject.location}
-                  </span>
-                  <span className="section-badge">
-                    <Layers size={13} /> {inspectingProject.categoryLabel}
-                  </span>
-                  {inspectingProject.scope && (
-                    <span className="section-badge">
-                      <Sparkles size={13} /> {inspectingProject.scope}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              <div className="project-inspect-body">
-                <div className="project-inspect-header">
-                  <span className="section-badge pulse-badge">
-                    Architectural Lighting Case Study
-                  </span>
-                  <h2 id="inspect-project-title" className="inspect-title">
-                    {inspectingProject.title}
-                  </h2>
-                  <p className="inspect-design-intent">
-                    {inspectingProject.designIntent || inspectingProject.description}
-                  </p>
-                </div>
-
-                {/* Technical Photometrics Grid */}
-                <div className="inspect-specs-card">
-                  <h4 className="inspect-specs-title">
-                    <Sliders size={16} className="gold-text" /> Lighting Engineering Specifications
-                  </h4>
-                  <div className="inspect-specs-grid">
-                    <div className="spec-item">
-                      <span className="spec-label">Color Temp (CCT)</span>
-                      <span className="spec-val">{inspectingProject.colorTemp || '3000K Warm White'}</span>
-                    </div>
-                    <div className="spec-item">
-                      <span className="spec-label">Color Rendering</span>
-                      <span className="spec-val">{inspectingProject.cri || 'Ra > 92'}</span>
-                    </div>
-                    <div className="spec-item">
-                      <span className="spec-label">Target Illuminance</span>
-                      <span className="spec-val">{inspectingProject.luxLevel || '200 - 350 Lux'}</span>
-                    </div>
-                    <div className="spec-item">
-                      <span className="spec-label">Ceiling Height</span>
-                      <span className="spec-val">{inspectingProject.ceilingHeight || '10.5 ft'}</span>
-                    </div>
-                    <div className="spec-item">
-                      <span className="spec-label">Optical Beam Spread</span>
-                      <span className="spec-val">{inspectingProject.beamAngle || '24° / 36°'}</span>
-                    </div>
-                    <div className="spec-item">
-                      <span className="spec-label">Glare Shielding</span>
-                      <span className="spec-val">UGR &lt; 19 Deep Conical Recess</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Fixtures Installed */}
-                {inspectingProject.fixtures && inspectingProject.fixtures.length > 0 && (
-                  <div className="inspect-fixtures-card">
-                    <h4 className="inspect-specs-title">
-                      <CheckCircle2 size={16} className="gold-text" /> Luminaire Specification Schedule
-                    </h4>
-                    <ul className="inspect-fixtures-list">
-                      {inspectingProject.fixtures.map((fix, fIdx) => (
-                        <li key={fIdx} className="inspect-fixture-item">
-                          <CheckCircle2 size={14} className="gold-text flex-shrink-0" />
-                          <span>{fix}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Actions */}
-                <div className="inspect-actions">
-                  <button
-                    className="btn btn-whatsapp btn-lg"
-                    onClick={() => {
-                      window.open(`https://wa.me/919898086656?text=${encodeURIComponent(`Hello Arisca, I am reviewing the architectural case study for "${inspectingProject.title}" in ${inspectingProject.location}. Can you provide quotation details and a photometric design for my space?`)}`, '_blank', 'noopener,noreferrer');
-                    }}
-                  >
-                    <MessageCircle size={18} /> Inquire This Scheme on WhatsApp
-                  </button>
-                  <button
-                    className="btn btn-primary btn-lg"
-                    onClick={() => {
-                      setInspectingProject(null);
-                      openConsultModal();
-                    }}
-                  >
-                    <Calendar size={18} /> Book Free Laser Survey
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      {openIndex !== null && filteredProjects[openIndex] && (
+        <ProjectSheet
+          projects={filteredProjects}
+          index={openIndex}
+          onIndex={setOpenIndex}
+          onClose={() => setOpenIndex(null)}
+          onBook={() => { setOpenIndex(null); openConsultModal(); }}
+          onFullscreen={(proj) => { setOpenIndex(null); openLightbox(proj.url, `${proj.title} • ${proj.location}`); }}
+        />
       )}
     </div>
   );
