@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Production build artifacts
+dist/
+dist-ssr/
+
+# Environment variables & local secrets
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS & Editor generated files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Temporary download / scratch tools
+scratch/
+
+# Large PDF Catalogs (exceed GitHub's 100MB file limit)
+*.pdf
+**/*.pdf
+
+# Duplicate root assets directory (Vite serves from public/assets)
+assets/
+legacy_backup/

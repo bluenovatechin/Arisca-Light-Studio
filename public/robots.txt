@@ -1,0 +1,8 @@
+# Arisca Light Studio — Production Robots Configuration
+User-agent: *
+Allow: /
+Allow: /assets/
+Allow: /fonts/
+
+# Sitemaps
+Sitemap: https://www.ariscalightstudio.com/sitemap.xml

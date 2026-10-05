@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <!-- Force HTTPS in Production -->
+  <script>
+    if (window.location.protocol === 'http:' && window.location.hostname !== 'localhost' && !window.location.hostname.startsWith('127.')) {
+      window.location.replace(`https:${window.location.href.substring(window.location.protocol.length)}`);
+    }
+  </script>
+  <!-- GitHub Pages SPA Redirect Decoder -->
+  <script>
+    (function(l) {
+      if (l.search[1] === '/') {
+        var decoded = l.search.slice(1).split('&').map(function(s) {
+          return s.replace(/~and~/g, '&');
+        }).join('?');
+        window.history.replaceState(null, null,
+          l.pathname.slice(0, -1) + decoded + l.hash
+        );
+      }
+    }(window.location));
+  </script>
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <meta name="theme-color" content="#14958f">
+
+  <title>Discover Arisca Light Studio - Premium Architectural Lighting | Ahmedabad</title>
+  
+  <meta name="description" content="Explore Arisca Light Studio, your ultimate destination for Premium Architectural Lighting, LOFY recessed downlights, wall sconces, chandeliers, and bespoke residential illumination in Ahmedabad. Enjoy expert design consultation, precise laser site measurement, and white-glove installation.">
+  <meta name="keywords" content="Premium Lighting, Architectural Lighting, LOFY Lights, Ahmedabad Lighting Studio, Recessed COB, Chandeliers, Pendant Lights, Wall Sconces, Ceiling Lights">
+  <link rel="canonical" href="https://www.ariscalightstudio.com/">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.ariscalightstudio.com/">
+  <meta property="og:title" content="Discover Arisca Light Studio - Premium Architectural Lighting | Ahmedabad">
+  <meta property="og:description" content="Explore Arisca Light Studio, your ultimate destination for Premium Lighting, wall sconces, chandeliers, and home lighting in Ahmedabad.">
+  <meta property="og:image" content="https://www.ariscalightstudio.com/assets/branding/arisca-300-x-150-px-Awv8y3X42eTqlgJQ.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Arisca Light Studio - Architectural Lighting Ahmedabad">
+  <meta property="og:site_name" content="Arisca Light Studio">
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Discover Arisca Light Studio - Premium Architectural Lighting | Ahmedabad">
+  <meta name="twitter:description" content="Architectural LOFY downlights, chandeliers, and bespoke lighting consultations in Ahmedabad.">
+  <meta name="twitter:image" content="https://www.ariscalightstudio.com/assets/branding/arisca-300-x-150-px-Awv8y3X42eTqlgJQ.png">
+  
+  <!-- Local Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/branding/arisca-1-mxB29pjQy0T31J2j.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/branding/arisca-1-mxB29pjQy0T31J2j.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/branding/arisca-1-mxB29pjQy0T31J2j.png">
+  
+  <!-- 100% Self-Hosted Local Google Fonts (Cinzel, Outfit, Plus Jakarta Sans) -->
+  <link rel="stylesheet" href="/fonts/fonts.css">
+
+  <!-- Structured Data Schema.org -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HomeGoodsStore",
+    "name": "Arisca Light Studio",
+    "image": "/assets/branding/arisca-300-x-150-px-Awv8y3X42eTqlgJQ.png",
+    "url": "https://www.ariscalightstudio.com",
+    "telephone": "+919898086656",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "B - 103, Money Plant High Street, Jagatpur Road",
+      "addressLocality": "Ahmedabad",
+      "addressRegion": "Gujarat",
+      "postalCode": "382470",
+      "addressCountry": "IN"
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "opens": "10:00",
+      "closes": "20:30"
+    },
+    "sameAs": [
+      "https://www.facebook.com/share/1MSMcUSAbj/?mibextid=wwXIfr",
+      "https://www.instagram.com/arisca_light_studio?igsh=Mjk1aHgwZ3ptMm1h&utm_source=qr"
+    ]
+  }
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>
