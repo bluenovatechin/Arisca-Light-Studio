@@ -6,7 +6,6 @@ import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
 import ConsultationModal from './components/ConsultationModal';
 import LightboxModal from './components/LightboxModal';
-import GlobalSearchModal from './components/GlobalSearchModal';
 import Toast from './components/Toast';
 
 // Pages
@@ -20,6 +19,7 @@ import InteriorDesignersPage from './pages/InteriorDesignersPage';
 import CatalogsPage from './pages/CatalogsPage';
 import ContactPage from './pages/ContactPage';
 import WishlistPage from './pages/WishlistPage';
+import SearchPage from './pages/SearchPage';
 import CollectionPage from './pages/CollectionPage';
 import CollectionItemPage from './pages/CollectionItemPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
@@ -140,6 +140,7 @@ function AppContent() {
     if (r === '/catalogs' || r === '/catalog') return <CatalogsPage onNavigate={navigate} />;
     if (r === '/contact') return <ContactPage onNavigate={navigate} />;
     if (r === '/wishlist') return <WishlistPage onNavigate={navigate} />;
+    if (r === '/search') return <SearchPage key="search" query={routeQuery} onNavigate={navigate} />;
     if (r === '/privacy-policy' || r === '/privacy') return <PrivacyPolicyPage onNavigate={navigate} />;
     if (r === '/terms-and-conditions' || r === '/terms') return <TermsPage onNavigate={navigate} />;
     if (r === '/404') return <NotFoundPage onNavigate={navigate} />;
@@ -151,7 +152,14 @@ function AppContent() {
     return <NotFoundPage onNavigate={navigate} />;
   };
 
+  // Every "open search" (header, menu, Ctrl+K, 404 page) goes to the full search page
   const { isSearchOpen, closeSearch } = useCart();
+  useEffect(() => {
+    if (!isSearchOpen) return;
+    closeSearch();
+    if (currentRoute !== '/search') navigate('/search');
+    else document.querySelector('.srch-box input')?.focus();
+  }, [isSearchOpen]);
 
   return (
     <div className="arisca-app-root">
@@ -170,11 +178,6 @@ function AppContent() {
       <ConsultationModal />
       <LightboxModal />
       <CookieConsentBanner onNavigate={navigate} />
-      <GlobalSearchModal
-        isOpen={isSearchOpen}
-        onClose={closeSearch}
-        onNavigate={navigate}
-      />
     </div>
   );
 }

@@ -13,7 +13,11 @@ import {
   ArrowRight,
   MapPin,
   Home,
-  Compass,
+  LayoutGrid,
+  Lightbulb,
+  Images,
+  BookOpen,
+  ChevronRight,
   Sun,
   Moon
 } from 'lucide-react';
@@ -84,12 +88,32 @@ export default function Header({ currentRoute, routeQuery, onNavigate }) {
     return () => { cancelAnimationFrame(raf); clearTimeout(t); };
   }, [cartPulse]);
 
-  const quickLinks = [
+  // Phone menu: the main pages, then grouped secondary links
+  const MAIN_LINKS = [
     { label: 'Home', icon: Home, href: '/', on: currentRoute === '/' || currentRoute === '/home' },
-    { label: 'Collection', icon: Compass, href: '/collection', on: active === 'collection' },
-    { label: 'Saved', icon: Heart, href: '/wishlist', on: currentRoute === '/wishlist', count: wishlistCount },
-    { label: 'Basket', icon: ShoppingBag, onClick: () => { closeMobileMenu(); openCart(); }, count: cartTotalCount }
+    { label: 'Collection', icon: LayoutGrid, href: '/collection', on: active === 'collection' },
+    { label: 'Downlights', icon: Lightbulb, href: '/shop', on: active === 'downlights' },
+    { label: 'Projects', icon: Images, href: '/client-diaries', on: active === 'projects' },
+    { label: 'Catalogs', icon: BookOpen, href: '/catalogs', on: active === 'catalogs' }
   ];
+  const GROUPS = [
+    {
+      title: 'Services',
+      links: [
+        ['Home lighting consultancy', '/home-consultancy'],
+        ['For architects & designers', '/interior-designers'],
+        ['Lux calculator', '/#lux-calculator']
+      ]
+    },
+    {
+      title: 'Studio',
+      links: [
+        ['About Arisca', '/about'],
+        ['Visit & contact', '/contact']
+      ]
+    }
+  ];
+  const link = (href) => ({ href, onClick: (e) => { e.preventDefault(); go(href); } });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -250,7 +274,7 @@ export default function Header({ currentRoute, routeQuery, onNavigate }) {
           <div className="header-tools">
             <button
               type="button"
-              className="tool-btn theme-toggle-btn"
+              className="tool-btn theme-toggle-btn desktop-only"
               onClick={toggleTheme}
               aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
               title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
@@ -262,11 +286,11 @@ export default function Header({ currentRoute, routeQuery, onNavigate }) {
               <span>Search</span>
               <kbd>Ctrl K</kbd>
             </button>
-            <a href="/wishlist" className="tool-btn" aria-label={`Saved lights (${wishlistCount})`}>
+            <a href="/wishlist" className="tool-btn desktop-only" aria-label={`Saved lights (${wishlistCount})`}>
               <Heart size={19} />
               {wishlistCount > 0 && <span className="tool-badge">{wishlistCount}</span>}
             </a>
-            <button type="button" className={`tool-btn ${pulsing ? 'is-pulsing' : ''}`} onClick={openCart} aria-label={`Inquiry basket (${cartTotalCount})`}>
+            <button type="button" className={`tool-btn ${pulsing ? 'is-pulsing' : ''}`} onClick={openCart} aria-label={`Your inquiry (${cartTotalCount})`}>
               <ShoppingBag size={19} />
               {cartTotalCount > 0 && <span className="tool-badge" key={cartTotalCount}>{cartTotalCount}</span>}
             </button>
@@ -291,90 +315,81 @@ export default function Header({ currentRoute, routeQuery, onNavigate }) {
         <aside className="sheet-panel" role="dialog" aria-modal="true" aria-label="Menu">
           <div className="sheet-head">
             <img src={LOGO} alt="Arisca Light Studio" width={120} height={60} />
-            <div className="sheet-head-actions">
-              <button
-                type="button"
-                className="tool-btn theme-toggle-btn"
-                onClick={toggleTheme}
-                aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-                title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-              >
-                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-              </button>
-              <button type="button" className="tool-btn" onClick={closeMobileMenu} aria-label="Close menu">
-                <X size={22} />
-              </button>
-            </div>
+            <button type="button" className="sm-close" onClick={closeMobileMenu} aria-label="Close menu">
+              <X size={20} />
+            </button>
           </div>
 
-          <button type="button" className="sheet-search" onClick={() => { closeMobileMenu(); openSearch(); }}>
-            <Search size={16} /> Search lights, finishes, item numbers…
-          </button>
-
-          <nav className="sheet-quick" aria-label="Quick links">
-            {quickLinks.map(({ label, icon: Icon, href, on, count, onClick }) => {
-              const inner = (
-                <>
-                  <span className="sheet-quick-icon">
-                    <Icon size={20} strokeWidth={1.7} />
-                    {count > 0 && <span className="sheet-quick-badge">{count}</span>}
-                  </span>
-                  <span>{label}</span>
-                </>
-              );
-              return href ? (
-                <a
-                  key={label}
-                  href={href}
-                  className={`sheet-quick-item ${on ? 'is-active' : ''}`}
-                  aria-current={on ? 'page' : undefined}
-                  onClick={(e) => { e.preventDefault(); go(href); }}
-                >
-                  {inner}
-                </a>
-              ) : (
-                <button key={label} type="button" className="sheet-quick-item" onClick={onClick}>
-                  {inner}
-                </button>
-              );
-            })}
-          </nav>
-
           <div className="sheet-body">
-            <p className="sheet-label">The Collection</p>
-            <div className="sheet-cats">
+            <button type="button" className="sheet-search" onClick={() => { closeMobileMenu(); openSearch(); }}>
+              <Search size={17} /> Search lights, finishes, item no.
+            </button>
+
+            <nav aria-label="Main">
+              <ul className="sm-main">
+                {MAIN_LINKS.map(({ label, icon: Icon, href, on }) => (
+                  <li key={label}>
+                    <a {...link(href)} className={`sm-main-link ${on ? 'is-active' : ''}`} aria-current={on ? 'page' : undefined}>
+                      <span className="sm-main-icon"><Icon size={19} strokeWidth={1.7} /></span>
+                      <span className="sm-main-label">{label}</span>
+                      <ChevronRight size={17} className="sm-chev" aria-hidden="true" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            <p className="sm-label">Shop by category</p>
+            <div className="sm-cats">
               {collectionCategories.map((c) => (
-                <a key={c.key} href={`/collection?cat=${c.key}`} className="sheet-cat" onClick={(e) => { e.preventDefault(); go(`/collection?cat=${c.key}`); }}>
-                  <img src={coverImage(c.key)} alt={c.label} loading="lazy" width={600} height={800} />
+                <a key={c.key} {...link(`/collection?cat=${c.key}`)} className="sm-cat">
+                  <img src={coverImage(c.key)} alt="" loading="lazy" width={600} height={800} />
                   <span>{c.short}</span>
                 </a>
               ))}
-              <a href="/collection" className="sheet-cat sheet-cat-all" onClick={(e) => { e.preventDefault(); go('/collection'); }}>
-                <span>View all <ArrowRight size={14} /></span>
-              </a>
             </div>
 
-            <p className="sheet-label">Explore</p>
-            <ul className="sheet-links">
-              <li><a href="/" className={currentRoute === '/' ? 'is-active' : ''} onClick={(e) => { e.preventDefault(); go('/'); }}>Home</a></li>
-              <li><a href="/shop" className={active === 'downlights' ? 'is-active' : ''} onClick={(e) => { e.preventDefault(); go('/shop'); }}>Architectural downlights</a></li>
-              <li><a href="/catalogs" className={active === 'catalogs' ? 'is-active' : ''} onClick={(e) => { e.preventDefault(); go('/catalogs'); }}>PDF catalogs</a></li>
-              <li><a href="/client-diaries" className={active === 'projects' ? 'is-active' : ''} onClick={(e) => { e.preventDefault(); go('/client-diaries'); }}>Client projects</a></li>
-              <li><a href="/home-consultancy" onClick={(e) => { e.preventDefault(); go('/home-consultancy'); }}>Home lighting consultancy</a></li>
-              <li><a href="/interior-designers" onClick={(e) => { e.preventDefault(); go('/interior-designers'); }}>For architects & designers</a></li>
-              <li><a href="/about" onClick={(e) => { e.preventDefault(); go('/about'); }}>About Arisca</a></li>
-              <li><a href="/contact" onClick={(e) => { e.preventDefault(); go('/contact'); }}>Visit & contact</a></li>
-              <li><a href="/privacy-policy" onClick={(e) => { e.preventDefault(); go('/privacy-policy'); }}>Privacy Policy</a></li>
-              <li><a href="/terms-and-conditions" onClick={(e) => { e.preventDefault(); go('/terms-and-conditions'); }}>Terms & Conditions</a></li>
-            </ul>
+            <div className="sm-groups">
+              {GROUPS.map((g) => (
+                <div key={g.title}>
+                  <p className="sm-label">{g.title}</p>
+                  <ul className="sm-sub">
+                    {g.links.map(([label, href]) => (
+                      <li key={href}><a {...link(href)}>{label}</a></li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+
+            <div className="sm-utils">
+              <a {...link('/wishlist')} className={`sm-util ${currentRoute === '/wishlist' ? 'is-active' : ''}`}>
+                <span className="sm-util-icon"><Heart size={18} />{wishlistCount > 0 && <span className="sm-badge">{wishlistCount}</span>}</span>
+                Saved
+              </a>
+              <button type="button" className="sm-util" onClick={() => { closeMobileMenu(); openCart(); }}>
+                <span className="sm-util-icon"><ShoppingBag size={18} />{cartTotalCount > 0 && <span className="sm-badge">{cartTotalCount}</span>}</span>
+                Inquiry
+              </button>
+              <button type="button" className="sm-util" onClick={toggleTheme} aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}>
+                <span className="sm-util-icon">{theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}</span>
+                {theme === 'dark' ? 'Light' : 'Dark'}
+              </button>
+            </div>
+
+            <p className="sm-legal">
+              <a {...link('/privacy-policy')}>Privacy</a>
+              <span aria-hidden="true">·</span>
+              <a {...link('/terms-and-conditions')}>Terms</a>
+            </p>
           </div>
 
-          <div className="sheet-foot">
+          <div className="sheet-foot sm-foot">
             <button type="button" className="btn-pill btn-pill-solid" onClick={() => { closeMobileMenu(); openConsultModal(); }}>
-              Book a studio visit
+              Book a visit
             </button>
-            <a className="btn-pill btn-pill-wa" href="https://wa.me/919898086656" target="_blank" rel="noopener noreferrer">
-              <WhatsAppIcon size={16} /> WhatsApp us
+            <a className="sm-wa" href="https://wa.me/919898086656" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+              <WhatsAppIcon size={22} />
             </a>
           </div>
         </aside>
