@@ -201,6 +201,7 @@ export default function ClientDiariesPage({ onNavigate }) {
           </div>
 
           {/* Projects Grid */}
+          <h2 className="sr-only">Projects</h2>
           <div className="diaries-grid">
             {filteredProjects.map((proj, idx) => (
               <article

@@ -26,8 +26,8 @@
   --border-gold: rgba(20, 149, 143, 0.35);
 
   /* Brand accent — Arisca teal (legacy token names kept for compatibility) */
-  --gold-primary: #14958f;
-  --gold-hover: #0f7b76;
+  --gold-primary: #0d726d; /* accessible teal: 5.6:1 with white */
+  --gold-hover: #0a5f5b;
   --gold-dark: #0b5f5b;
   --gold-light: #e8f5f4;
   --gold-border: #b7dfdc;
@@ -40,7 +40,7 @@
   --text-secondary: #4a5254;
   --text-muted: #7a8183;
   --text-light: #a3a9aa;
-  --text-gold: #0f7b76;
+  --text-gold: #0d726d;
 
   /* Functional Accents */
   --whatsapp-green: #25d366;
@@ -1825,6 +1825,7 @@ h6 {
   border-bottom: 1px solid var(--border-light);
 }
 
+.sidebar-filter-header h2,
 .sidebar-filter-header h3 {
   font-size: 1.05rem;
   display: flex;

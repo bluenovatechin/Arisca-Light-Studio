@@ -247,7 +247,7 @@ export default function ProductDetailPage({ slug, onNavigate }) {
 
             {/* Technical Luminaire Specifications Table */}
             <div className="detail-specs-table-card">
-              <h3 className="specs-table-title">Photometric & Hardware Specs</h3>
+              <h2 className="specs-table-title">Photometric & Hardware Specs</h2>
               <div className="specs-table-grid">
                 <div className="spec-cell">
                   <span className="spec-label">Power Rating</span>

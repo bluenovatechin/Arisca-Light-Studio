@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, lazy, Suspense } from 'react';
 import { ArrowRight, ArrowUpRight, ChevronDown, MapPin, Clock, Phone, Ruler, PenTool, Images, Sparkles } from 'lucide-react';
 import WhatsAppIcon from '../components/WhatsAppIcon';
 import { clientProjects, seoFaqs, clientTestimonials, enrichedProducts } from '../data/ariscaData';
@@ -6,7 +6,7 @@ import { useCart } from '../context/CartContext';
 import SeoHead from '../components/SeoHead';
 import LightCard from '../components/LightCard';
 import ProductCard from '../components/ProductCard';
-import LightingCalculator from '../components/LightingCalculator';
+const LightingCalculator = lazy(() => import('../components/LightingCalculator'));
 import { tug } from '../utils/tug';
 import { useCollection, collectionCategories, coverImage } from '../data/collection';
 
@@ -26,8 +26,25 @@ function HeroStage({ lit, onToggle }) {
       <div className="stage-arches">
         {HERO_PIECES.map((p, i) => (
           <a key={p.id} href={`/collection/${p.id}`} className={`arch arch-${i}`} aria-label={p.label}>
-            <img src={`/assets/collection/${p.cat}/${p.id}-studio.webp`} alt={p.label} width={600} height={800} fetchpriority={i === 1 ? 'high' : undefined} />
-            <img src={`/assets/collection/${p.cat}/${p.id}-scene.webp`} alt="" aria-hidden="true" className="arch-scene" width={600} height={800} />
+            <img
+              src={`/assets/collection/${p.cat}/${p.id}-studio.webp`}
+              alt={p.label}
+              width={600}
+              height={800}
+              fetchpriority={i === 1 ? 'high' : 'low'}
+              loading={i === 1 ? 'eager' : 'lazy'}
+              decoding="async"
+            />
+            <img
+              src={`/assets/collection/${p.cat}/${p.id}-scene.webp`}
+              alt=""
+              aria-hidden="true"
+              className="arch-scene"
+              width={600}
+              height={800}
+              loading="lazy"
+              decoding="async"
+            />
           </a>
         ))}
       </div>
@@ -36,7 +53,7 @@ function HeroStage({ lit, onToggle }) {
         className="stage-cord"
         onClick={(e) => { tug(e.currentTarget); onToggle(); }}
         aria-pressed={lit}
-        aria-label={lit ? 'Switch the lights off' : 'Switch the lights on'}
+        aria-label={lit ? 'Lights off: switch the room photos off' : 'Pull me: switch the lights on'}
       >
         <span className="stage-cord-line" />
         <span className="stage-cord-bead" />
@@ -148,6 +165,7 @@ export default function HomePage({ onNavigate }) {
               type="button"
               className={`lc-switch lc-switch-lg ${editLit ? 'is-lit' : ''}`}
               aria-pressed={editLit}
+              aria-label={editLit ? 'All lights on' : 'All lights off'}
               onClick={() => setEditLit((l) => !l)}
             >
               <span className="lc-switch-track"><span className="lc-switch-knob" /></span>
@@ -310,7 +328,9 @@ export default function HomePage({ onNavigate }) {
       {/* ============ LUX CALCULATOR ============ */}
       <section className="section-v2 calc-wrap">
         <div className="container">
-          <LightingCalculator onNavigate={onNavigate} />
+          <Suspense fallback={<div className="calc-placeholder" style={{ minHeight: '280px' }} aria-busy="true" />}>
+            <LightingCalculator onNavigate={onNavigate} />
+          </Suspense>
         </div>
       </section>
 

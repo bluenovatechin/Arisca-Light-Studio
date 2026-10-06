@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { Heart, Plus, Check, Sparkles } from 'lucide-react';
 
@@ -7,21 +7,34 @@ import { Heart, Plus, Check, Sparkles } from 'lucide-react';
  * page (works with middle-click / open in new tab); save and add-to-inquiry are
  * small, always-visible buttons layered above it.
  */
-export default function ProductCard({ product }) {
+// Cards use the 640px copies in /optimized/products/640/ (the originals are 1400px)
+const cardImage = (src) => src?.replace('/optimized/products/', '/optimized/products/640/');
+
+export default function ProductCard({ product, priority = false }) {
+  const [hovered, setHovered] = useState(false);
   const { addToCart, toggleWishlist, isInWishlist, cart } = useCart();
 
   const href = `/product/${product.slug}`;
   const isFavorited = isInWishlist(product.id);
   const inBasket = cart.some((c) => c.product.id === product.id);
-  const primaryImg = product.thumbnail || product.images?.[0]?.url;
-  const secondaryImg = product.images?.[1]?.url;
+  const primaryImg = cardImage(product.thumbnail || product.images?.[0]?.url);
+  const secondaryImg = cardImage(product.images?.[1]?.url);
 
   return (
-    <article className="pc">
-      <a href={href} className="pc-link" aria-label={product.title}>
+    <article className="pc" onMouseEnter={() => setHovered(true)}>
+      <a href={href} className="pc-link">
         <span className="pc-media">
-          <img src={primaryImg} alt={`${product.title}, ${product.finish}`} loading="lazy" decoding="async" />
-          {secondaryImg && secondaryImg !== primaryImg && (
+          <img
+            src={primaryImg}
+            alt=""
+            width={640}
+            height={640}
+            loading={priority ? 'eager' : 'lazy'}
+            fetchpriority={priority ? 'high' : undefined}
+            decoding="async"
+          />
+          {/* second photo is only fetched once someone actually hovers (never on phones) */}
+          {hovered && secondaryImg && secondaryImg !== primaryImg && (
             <img className="pc-media-alt" src={secondaryImg} alt="" aria-hidden="true" loading="lazy" decoding="async" />
           )}
           {product.ribbon && (

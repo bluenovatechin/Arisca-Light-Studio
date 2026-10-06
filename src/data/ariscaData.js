@@ -1,4 +1,4 @@
-import { ariscaData as rawData } from '../../data.js';
+import { ariscaData as rawData } from './siteData.js';
 import assetMap from './assetMap.json';
 import { collectionCategories, coverImage } from './collection.js';
 

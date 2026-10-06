@@ -147,13 +147,12 @@ export default function CollectionPage({ query = '', onNavigate }) {
               update({ lights: lightsOn ? '' : 'on' });
             }}
             aria-pressed={lightsOn}
-            aria-label={lightsOn ? 'Switch the room view off' : 'Switch the room view on'}
           >
             <span className="pull-switch-cord" aria-hidden="true">
               <span className="pull-switch-bead" />
             </span>
             {/* Both states are always rendered and cross-faded, so nothing shifts while switching */}
-            <span className="pull-switch-text" aria-hidden="true">
+            <span className="pull-switch-text">
               <span className="ps-state ps-off">
                 <strong>Lights off</strong>
                 <span>Pull to see every piece in a room</span>
@@ -265,9 +264,10 @@ export default function CollectionPage({ query = '', onNavigate }) {
           </div>
         ) : (
           <>
+            <h2 className="sr-only">Pieces</h2>
             <div className="coll-grid">
               {results.slice(0, visible).map((item, idx) => (
-                <LightCard key={item.id} item={item} lit={lightsOn} feature={idx % 13 === 6} />
+                <LightCard key={item.id} item={item} lit={lightsOn} feature={idx % 13 === 6} priority={idx < 4} />
               ))}
             </div>
             {visible < results.length && <div ref={sentinel} className="coll-sentinel" aria-hidden="true" />}

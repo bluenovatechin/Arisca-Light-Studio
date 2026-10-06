@@ -7,11 +7,11 @@
 
 :root {
   --teal: #14958f;
-  --teal-deep: #0f7b76;
+  --teal-deep: #0d726d; /* ≥4.5:1 on white and on --stone */
   --teal-wash: #e9f5f4;
   --ink: #1f2628;
   --ink-soft: #4a5254;
-  --mute: #7a8183;
+  --mute: #62696b; /* 5.4:1 on --paper (was #7a8183, 3.9:1) */
   --line: #e6e9e8;
   --paper: #fbfbfa;
   --stone: #eef0ef;
@@ -220,7 +220,7 @@ a:hover>.link-arrow svg {
 
 .btn-pill-wa {
   background: var(--surface);
-  color: #128c4a;
+  color: #0e7a3f;
   border-color: #cfeedd;
 }
 
@@ -6421,3 +6421,50 @@ html.theme-fading body * {
   .srch-more-link { display: none; }
   .srch-empty-actions .btn-pill { flex: 1 1 100%; }
 }
+
+/* Footer phone numbers: comfortable, separate tap targets */
+.footer-contact a, .site-footer p a[href^="tel:"] { display: inline-block; min-height: 26px; line-height: 26px; }
+
+/* Placeholder while a page's code loads (keeps the footer from jumping up) */
+.page-loading { min-height: 120vh; } /* taller than the screen, so the footer never flashes in and jumps */
+
+/* ==========================================================================
+   LIGHTHOUSE FIXES — contrast, logo ratio, pull-switch visibility
+   ========================================================================== */
+/* Active teal pills: white text needs the deeper teal for 4.5:1 */
+.downlights-tab-pill.is-active, .room-pill-btn.active, .height-btn.active { background: var(--teal-deep) !important; border-color: var(--teal-deep) !important; color: #fff !important; }
+.downlights-tab-pill.is-active .tab-badge { background: rgba(0, 0, 0, 0.22) !important; color: #fff !important; }
+.contact-page-wrapper a[href^="https://wa.me"], .teal-text { color: var(--teal-deep); }
+[data-theme='dark'] .contact-page-wrapper a[href^="https://wa.me"], [data-theme='dark'] .teal-text { color: var(--teal-deep); }
+.studio-card-title { margin: 0 0 6px; }
+
+/* Header logo keeps its true 2:1 shape (the global img max-width squeezed it) */
+.brand img { width: 130px; height: 65px; max-width: none; }
+
+/* Pull switch: the hidden label is truly hidden (not just transparent), so
+   assistive tech and agents only see the current state. Visibility flips at
+   the same moments as the sequential fade. */
+.ps-state { transition: opacity 0.22s ease, transform 0.32s var(--ease-light), visibility 0s linear 0.22s; }
+.ps-off { visibility: visible; transition: opacity 0.22s ease 0.2s, transform 0.32s var(--ease-light) 0.2s, visibility 0s linear 0.2s; }
+.ps-on { visibility: hidden; transition: opacity 0.22s ease, transform 0.32s var(--ease-light), visibility 0s linear 0.22s; }
+.pull-switch.is-on .ps-off { visibility: hidden; transition: opacity 0.22s ease, transform 0.32s var(--ease-light), visibility 0s linear 0.22s; }
+.pull-switch.is-on .ps-on { visibility: visible; transition: opacity 0.22s ease 0.2s, transform 0.32s var(--ease-light) 0.2s, visibility 0s linear 0.2s; }
+
+/* Small white-on-teal badges and search counts need the deeper teal / full opacity */
+.tool-badge, .sm-badge, .sheet-quick-badge, .tab-badge, .tab-badge.gold-tab-badge { background: var(--teal-deep); }
+.srch-cat-n { opacity: 1; color: inherit; }
+
+/* WhatsApp buttons keep WhatsApp's bright green but use deep-green text/icons:
+   white on #25d366 is only 1.98:1, deep green is 6.3:1 */
+.btn-whatsapp, .btn-whatsapp:hover,
+.bk-foot .bk-wa, .bk-foot .bk-wa:hover,
+.bkg-wa, .bkg-wa:hover,
+.pj-wa, .pj-wa:hover,
+.sm-wa, .sm-wa:hover { color: #08331c !important; }
+:root:not([data-theme='dark']) .trade-direct-link { color: #0e7a3f; }
+
+/* Stock pill: readable green on its pale background */
+:root:not([data-theme='dark']) .stock-pill { color: #047857; }
+
+/* Older filter headings changed from h4 to h3 keep their size */
+.filter-group-box h3.filter-group-title { font-size: 0.9rem; margin: 0 0 0.75rem; }

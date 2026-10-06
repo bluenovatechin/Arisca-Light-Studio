@@ -1,32 +1,35 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { CartProvider, useCart } from './context/CartContext';
 import { ThemeProvider } from './context/ThemeContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import CartDrawer from './components/CartDrawer';
-import ConsultationModal from './components/ConsultationModal';
-import LightboxModal from './components/LightboxModal';
 import Toast from './components/Toast';
 
-// Pages
+// Modals are lazy loaded so they don't delay the initial paint or block mobile execution
+const CartDrawer = lazy(() => import('./components/CartDrawer'));
+const ConsultationModal = lazy(() => import('./components/ConsultationModal'));
+const LightboxModal = lazy(() => import('./components/LightboxModal'));
+
+// Pages — Home ships in the main bundle; every other page loads when first visited
 import HomePage from './pages/HomePage';
-import ShopPage from './pages/ShopPage';
-import ProductDetailPage from './pages/ProductDetailPage';
-import AboutPage from './pages/AboutPage';
-import ClientDiariesPage from './pages/ClientDiariesPage';
-import HomeConsultancyPage from './pages/HomeConsultancyPage';
-import InteriorDesignersPage from './pages/InteriorDesignersPage';
-import CatalogsPage from './pages/CatalogsPage';
-import ContactPage from './pages/ContactPage';
-import WishlistPage from './pages/WishlistPage';
-import SearchPage from './pages/SearchPage';
-import CollectionPage from './pages/CollectionPage';
-import CollectionItemPage from './pages/CollectionItemPage';
-import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
-import TermsPage from './pages/TermsPage';
-import NotFoundPage from './pages/NotFoundPage';
-import CookieConsentBanner from './components/CookieConsentBanner';
+const ShopPage = lazy(() => import('./pages/ShopPage'));
+const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
+const ClientDiariesPage = lazy(() => import('./pages/ClientDiariesPage'));
+const HomeConsultancyPage = lazy(() => import('./pages/HomeConsultancyPage'));
+const InteriorDesignersPage = lazy(() => import('./pages/InteriorDesignersPage'));
+const CatalogsPage = lazy(() => import('./pages/CatalogsPage'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
+const WishlistPage = lazy(() => import('./pages/WishlistPage'));
+const SearchPage = lazy(() => import('./pages/SearchPage'));
+const CollectionPage = lazy(() => import('./pages/CollectionPage'));
+const CollectionItemPage = lazy(() => import('./pages/CollectionItemPage'));
+const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
+const TermsPage = lazy(() => import('./pages/TermsPage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+// import CookieConsentBanner from './components/CookieConsentBanner';
 import { trackPageView } from './utils/analytics';
+import { registerWebMcpTools } from './utils/webmcp';
 
 const isExternal = (href) => /^(https?:|tel:|mailto:)/.test(href);
 
@@ -153,7 +156,10 @@ function AppContent() {
   };
 
   // Every "open search" (header, menu, Ctrl+K, 404 page) goes to the full search page
-  const { isSearchOpen, closeSearch } = useCart();
+  const { isSearchOpen, closeSearch, openConsultModal } = useCart();
+
+  // Structured tools for AI agents (WebMCP); a no-op in other browsers
+  useEffect(() => registerWebMcpTools({ navigate, openBooking: openConsultModal }), []);
   useEffect(() => {
     if (!isSearchOpen) return;
     closeSearch();
@@ -170,14 +176,20 @@ function AppContent() {
       <Header currentRoute={currentRoute} routeQuery={routeQuery} onNavigate={navigate} />
 
       <main id="main-content" className="main-viewport" tabIndex={-1}>
-        {renderPage()}
+        <Suspense fallback={<div className="page-loading" aria-busy="true" />}>
+          {renderPage()}
+        </Suspense>
       </main>
 
       <Footer onNavigate={navigate} />
-      <CartDrawer onNavigate={navigate} />
-      <ConsultationModal />
-      <LightboxModal />
+      <Suspense fallback={null}>
+        <CartDrawer onNavigate={navigate} />
+        <ConsultationModal />
+        <LightboxModal />
+      </Suspense>
+      {/* Cookie consent notification currently commented out
       <CookieConsentBanner onNavigate={navigate} />
+      */}
     </div>
   );
 }

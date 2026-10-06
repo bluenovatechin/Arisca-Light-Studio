@@ -111,7 +111,7 @@ export default function PrivacyPolicyPage({ onNavigate }) {
                   If you have any questions regarding your data or wish to update or delete your contact records, please contact:
                 </p>
                 <div className="legal-contact-box">
-                  <h4>Arisca Light Studio</h4>
+                  <h3>Arisca Light Studio</h3>
                   <p><MapPin size={16} className="gold-text" /> B - 103, Money Plant High Street, Jagatpur Road, Ahmedabad, Gujarat 382470</p>
                   <p><Phone size={16} className="gold-text" /> Phone: <a href="tel:+919898086656">+91 98980 86656</a></p>
                   <p><Mail size={16} className="gold-text" /> Email: <a href="mailto:contact@ariscalightstudio.com">contact@ariscalightstudio.com</a></p>

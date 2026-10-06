@@ -125,7 +125,7 @@ export default function ContactPage() {
             {/* Info & Map Column */}
             <div className="contact-info-col">
               <div className="studio-card">
-                <h3>Studio Headquarters</h3>
+                <h2 className="studio-card-title">Studio Headquarters</h2>
                 <p className="studio-lead">
                   Experience our collection of downlights, chandeliers, and outdoor luminaires in person.
                 </p>
@@ -256,7 +256,7 @@ export default function ContactPage() {
                     </button>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="contact-form" noValidate>
+                  <form onSubmit={handleSubmit} className="contact-form" noValidate toolname="send_contact_message" tooldescription="Send a message to Arisca Light Studio. Opens WhatsApp with the name, phone, email, subject and message filled in.">
                     {/* Spam Bot Honeypot */}
                     <div style={{ display: 'none', position: 'absolute', left: '-9999px' }} aria-hidden="true">
                       <label htmlFor="ct-hp">Leave this empty</label>

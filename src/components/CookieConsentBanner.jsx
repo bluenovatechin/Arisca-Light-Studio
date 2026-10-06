@@ -42,7 +42,7 @@ export default function CookieConsentBanner({ onNavigate }) {
       <div className="ck-body">
         <span className="ck-icon" aria-hidden="true"><Cookie size={20} /></span>
         <div>
-          <h4 className="ck-title">A quick note on cookies</h4>
+          <p className="ck-title">A quick note on cookies</p>
           <p className="ck-desc">
             We remember your basket and saved lights, and count visits anonymously to keep the site fast. No third-party trackers.{' '}
             <a

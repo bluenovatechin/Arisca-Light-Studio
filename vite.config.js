@@ -33,7 +33,23 @@ export default defineConfig(({ command, isPreview }) => {
   return {
     plugins: [react(), prefixPublicPaths(base)],
     base,
+    build: {
+      // lets browser dev tools (and Lighthouse) map the minified bundle back to the source
+      sourcemap: true,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'react-vendor': ['react', 'react-dom'],
+            'lucide-icons': ['lucide-react']
+          }
+        }
+      }
+    },
     server: {
+      port: 3000,
+      open: false
+    },
+    preview: {
       port: 3000,
       open: false
     }

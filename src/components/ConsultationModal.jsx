@@ -137,7 +137,7 @@ export default function ConsultationModal() {
               <button type="button" className="btn-pill" onClick={close}>Back to the site</button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} noValidate className="bkg-form">
+            <form onSubmit={handleSubmit} noValidate className="bkg-form" toolname="book_visit" tooldescription="Book a free studio visit, site visit or video call with Arisca Light Studio. Opens WhatsApp with the booking details filled in.">
               <header className="bkg-head">
                 <p className="eyebrow"><span className="eyebrow-lines" aria-hidden="true" />Book a visit</p>
                 <h2 id="bkg-title" className="bkg-title">Let's light your space, <em>together.</em></h2>

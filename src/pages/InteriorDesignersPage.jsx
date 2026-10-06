@@ -197,7 +197,7 @@ export default function InteriorDesignersPage() {
                 <p className="success-subtext">We've opened WhatsApp with your details filled in. Press send there and our team will reply shortly.</p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="trade-form" noValidate>
+              <form onSubmit={handleSubmit} className="trade-form" noValidate toolname="apply_trade_partner" tooldescription="Apply to the Arisca trade program for architects and interior designers. Opens WhatsApp with the studio details filled in.">
                 {/* Spam Bot Honeypot */}
                 <div style={{ display: 'none', position: 'absolute', left: '-9999px' }} aria-hidden="true">
                   <label htmlFor="tp-hp">Leave empty</label>

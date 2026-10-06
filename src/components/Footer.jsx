@@ -25,7 +25,7 @@ export default function Footer() {
         <div className="footer-cols">
           <div className="footer-col-v2 footer-brand">
             <a href="/" aria-label="Arisca Light Studio — home">
-              <img src="/assets/branding/arisca-300-x-150-px-Awv8y3X42eTqlgJQ.png" alt="Arisca Light Studio" width={150} height={75} />
+              <img src="/assets/branding/logo-300.webp" alt="Arisca Light Studio" width={150} height={75} loading="lazy" decoding="async" />
             </a>
             <p>Decorative and architectural lighting for homes, studios and hospitality projects across Ahmedabad and Gujarat.</p>
             <div className="footer-social">

@@ -1,28 +1,50 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { whatsappUrl } from '../utils/whatsapp';
+import { enrichedProducts, getLocalAsset } from '../data/ariscaData';
 
 const CartContext = createContext(null);
 
+// Items saved by older versions of the site can carry photo URLs on the old
+// website builder's CDN (cdn.zyrosite.com), which sets third-party cookies.
+// Refresh known downlights from current data and map any remote photo to its
+// local copy, so a saved basket never reaches the old server.
+const currentById = new Map(enrichedProducts.map((p) => [p.id, p]));
+const isRemote = (u) => typeof u === 'string' && /^https?:\/\//i.test(u);
+const localUrl = (u) => {
+  if (!isRemote(u)) return u;
+  const local = getLocalAsset(u, '');
+  return isRemote(local) ? undefined : local;
+};
+function freshen(product) {
+  if (!product || !product.id) return null;
+  const current = currentById.get(product.id);
+  if (current) return current;
+  const out = { ...product, thumbnail: localUrl(product.thumbnail) };
+  if (Array.isArray(product.images)) {
+    out.images = product.images.map((img) => ({ ...img, url: localUrl(img.url) })).filter((img) => img.url);
+  }
+  return out;
+}
+
+function loadSaved(key) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(key) || '[]');
+    return Array.isArray(saved) ? saved : [];
+  } catch {
+    return [];
+  }
+}
+
 export function CartProvider({ children }) {
   // Cart state persisted to localStorage
-  const [cart, setCart] = useState(() => {
-    try {
-      const saved = localStorage.getItem('arisca_cart');
-      return saved ? JSON.parse(saved).map(({ product }) => ({ product })) : [];
-    } catch {
-      return [];
-    }
-  });
+  const [cart, setCart] = useState(() =>
+    loadSaved('arisca_cart')
+      .map((item) => ({ product: freshen(item?.product) }))
+      .filter((item) => item.product)
+  );
 
   // Wishlist state persisted to localStorage
-  const [wishlist, setWishlist] = useState(() => {
-    try {
-      const saved = localStorage.getItem('arisca_wishlist');
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
+  const [wishlist, setWishlist] = useState(() => loadSaved('arisca_wishlist').map(freshen).filter(Boolean));
 
   // UI Modals and Drawers
   const [isCartOpen, setIsCartOpen] = useState(false);

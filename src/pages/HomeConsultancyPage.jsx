@@ -287,7 +287,7 @@ export default function HomeConsultancyPage({ onNavigate }) {
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="site-consult-form" noValidate>
+                <form onSubmit={handleSubmit} className="site-consult-form" noValidate toolname="request_home_consultation" tooldescription="Request an in-home lighting consultation in Ahmedabad (site visit, laser measurement, lighting layout). Opens WhatsApp with the details filled in.">
                   {/* Spam Bot Honeypot */}
                   <div style={{ display: 'none', position: 'absolute', left: '-9999px' }} aria-hidden="true">
                     <label htmlFor="f-hp">Leave empty</label>

@@ -192,7 +192,6 @@ export default function ShopPage({ initialCategory = 'all', query = '', onNaviga
             <button
               className="mobile-filter-open-btn"
               onClick={() => setIsMobileFilterOpen(true)}
-              aria-label="Open filter sidebar"
             >
               <SlidersHorizontal size={18} />
               <span>Filters ({hasActiveFilters ? 'Active' : 'All'})</span>
@@ -277,9 +276,9 @@ export default function ShopPage({ initialCategory = 'all', query = '', onNaviga
           {/* ================= DESKTOP FILTER SIDEBAR ================= */}
           <aside className="shop-filter-sidebar">
             <div className="sidebar-filter-header">
-              <h3>
+              <h2>
                 <Filter size={18} /> Filter Collection
-              </h3>
+              </h2>
               {hasActiveFilters && (
                 <button className="sidebar-reset-link" onClick={resetAllFilters}>
                   Reset
@@ -289,7 +288,7 @@ export default function ShopPage({ initialCategory = 'all', query = '', onNaviga
 
             {/* Category Filter */}
             <div className="filter-group-box">
-              <h4 className="filter-group-title">Luminaire Type</h4>
+              <h3 className="filter-group-title">Luminaire Type</h3>
               <div className="filter-checkbox-list">
                 {categories.map((cat) => (
                   <label
@@ -311,7 +310,7 @@ export default function ShopPage({ initialCategory = 'all', query = '', onNaviga
 
             {/* Wattage Filter */}
             <div className="filter-group-box">
-              <h4 className="filter-group-title">Power / Wattage</h4>
+              <h3 className="filter-group-title">Power / Wattage</h3>
               <div className="wattage-pills-grid">
                 {wattages.map((w) => (
                   <button
@@ -327,7 +326,7 @@ export default function ShopPage({ initialCategory = 'all', query = '', onNaviga
 
             {/* Finish Filter */}
             <div className="filter-group-box">
-              <h4 className="filter-group-title">Architectural Finish</h4>
+              <h3 className="filter-group-title">Architectural Finish</h3>
               <div className="filter-radio-list">
                 {finishes.map((f) => (
                   <label
@@ -348,7 +347,7 @@ export default function ShopPage({ initialCategory = 'all', query = '', onNaviga
 
             {/* Room / Interior Application Filter */}
             <div className="filter-group-box">
-              <h4 className="filter-group-title">Interior Space</h4>
+              <h3 className="filter-group-title">Interior Space</h3>
               <div className="filter-radio-list">
                 {roomOptions.map((r) => (
                   <label
@@ -396,11 +395,12 @@ export default function ShopPage({ initialCategory = 'all', query = '', onNaviga
               </div>
             ) : (
               <div className="shop-products-grid">
-                {filteredProducts.map((product) => (
+                {filteredProducts.map((product, i) => (
                   <ProductCard
                     key={product.id}
                     product={product}
                     onNavigate={onNavigate}
+                    priority={i < 4}
                   />
                 ))}
               </div>

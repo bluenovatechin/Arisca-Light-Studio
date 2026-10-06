@@ -111,6 +111,8 @@ export default function SearchPage({ query = '', onNavigate }) {
           <form
             className="srch-box"
             role="search"
+            toolname="search_lights"
+            tooldescription="Search Arisca Light Studio's lights and downlights by type, finish, material, wattage or item number."
             onSubmit={(e) => {
               e.preventDefault();
               update({ q: text.trim(), cat: '' });
@@ -151,7 +153,7 @@ export default function SearchPage({ query = '', onNavigate }) {
           )}
         </div>
 
-        {q && total > 0 && (
+        {q && (loading || total > 0) && (
           <nav className="container coll-cats srch-tabs" aria-label="Result types">
             {chip('all', 'All', total)}
             {pieces.length > 0 && chip('collection', 'Collection', pieces.length)}
@@ -215,7 +217,7 @@ export default function SearchPage({ query = '', onNavigate }) {
               {tab === 'all' && pieces.length > 0 && <a className="link-arrow srch-more-link" href="/shop">All downlights <ArrowRight size={15} /></a>}
             </div>
             <div className="coll-grid coll-grid-4 srch-grid">
-              {downlights.map((p) => <ProductCard key={p.id} product={p} onNavigate={onNavigate} />)}
+              {downlights.map((p, i) => <ProductCard key={p.id} product={p} onNavigate={onNavigate} priority={i < 4} />)}
             </div>
           </section>
         )}
@@ -238,7 +240,7 @@ export default function SearchPage({ query = '', onNavigate }) {
             )}
             {showPieces && (
               <div className="coll-grid coll-grid-4 srch-grid">
-                {piecesInCat.slice(0, piecesLimit).map((item) => <LightCard key={item.id} item={item} />)}
+                {piecesInCat.slice(0, piecesLimit).map((item, i) => <LightCard key={item.id} item={item} priority={i < 4 && !showDownlights} />)}
               </div>
             )}
             {piecesInCat.length > piecesLimit && (

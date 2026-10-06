@@ -19,7 +19,7 @@ export const FINISH_SWATCH = {
  * default; hovering (or flipping the switch on touch screens) washes the room
  * scene in from the fixture outward, like switching the lamp on.
  */
-export default function LightCard({ item, lit = false, feature = false }) {
+export default function LightCard({ item, lit = false, feature = false, priority = false }) {
   const { addToCart, toggleWishlist, isInWishlist, cart } = useCart();
   const [switched, setSwitched] = useState(false);
   const isLit = lit || switched;
@@ -34,7 +34,8 @@ export default function LightCard({ item, lit = false, feature = false }) {
           className="lc-studio"
           src={studioImage(item)}
           alt={`${item.title} — item ${item.no}`}
-          loading="lazy"
+          loading={priority ? 'eager' : 'lazy'}
+          fetchpriority={priority ? 'high' : undefined}
           decoding="async"
           width={600}
           height={800}

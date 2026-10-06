@@ -1,0 +1,28 @@
+{
+  "specVersion": "1.0",
+  "entries": [
+    {
+      "identifier": "urn:air:ariscalightstudio.com:site:lighting-studio",
+      "displayName": "Arisca Light Studio",
+      "type": "application/agent-card+json",
+      "description": "Designer and architectural lighting studio in Ahmedabad: browse and search over a thousand lights, shortlist pieces, and book a studio visit, site visit or video consultation over WhatsApp. Prices are shared after a consultation.",
+      "representativeQueries": [
+        "Find a brass chandelier for a double-height living room in Ahmedabad",
+        "Show anti-glare 12W COB downlights in black",
+        "Book a lighting consultation visit in Ahmedabad",
+        "Where can I see designer wall lights switched on in a showroom?"
+      ],
+      "data": {
+        "name": "Arisca Light Studio",
+        "description": "Lighting studio website with a searchable collection, architectural downlights, project gallery and WhatsApp booking.",
+        "provider": { "organization": "Arisca Light Studio", "url": "https://www.ariscalightstudio.com" },
+        "skills": [
+          { "id": "search_lights", "name": "Search lights", "description": "Full-text search across the collection and downlights.", "examples": ["/search?q=brass", "/search?q=12w&tab=downlights"] },
+          { "id": "browse_collection", "name": "Browse the collection", "description": "Filter decorative lights by category, type, finish, material and light source.", "examples": ["/collection?cat=pendants"] },
+          { "id": "book_visit", "name": "Book a visit", "description": "Request a studio visit, site visit or video call; the request is sent to the studio on WhatsApp." },
+          { "id": "contact", "name": "Contact the studio", "description": "WhatsApp +91 98980 86656, B-103 Money Plant High Street, Jagatpur Road, Ahmedabad." }
+        ]
+      }
+    }
+  ]
+}

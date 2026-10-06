@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import WhatsAppIcon from './WhatsAppIcon';
 
-const LOGO = '/assets/branding/arisca-300-x-150-px-Awv8y3X42eTqlgJQ.png';
+const LOGO = '/assets/branding/logo-300.webp';
 
 const NAV = [
   { id: 'collection', label: 'Collection', href: '/collection', mega: true },
@@ -281,7 +281,7 @@ export default function Header({ currentRoute, routeQuery, onNavigate }) {
             >
               {theme === 'dark' ? <Sun size={19} className="theme-toggle-icon sun" /> : <Moon size={19} className="theme-toggle-icon moon" />}
             </button>
-            <button type="button" className="tool-search" onClick={openSearch} aria-label="Search (Ctrl + K)">
+            <button type="button" className="tool-search" onClick={openSearch} title="Search (Ctrl + K)">
               <Search size={17} />
               <span>Search</span>
               <kbd>Ctrl K</kbd>
@@ -312,7 +312,7 @@ export default function Header({ currentRoute, routeQuery, onNavigate }) {
 
       <div className={`sheet ${isMobileMenuOpen ? 'is-open' : ''}`} aria-hidden={!isMobileMenuOpen}>
         <div className="sheet-backdrop" onClick={closeMobileMenu} />
-        <aside className="sheet-panel" role="dialog" aria-modal="true" aria-label="Menu">
+        <aside className="sheet-panel" role="dialog" aria-modal="true" aria-label="Menu" inert={!isMobileMenuOpen ? '' : undefined}>
           <div className="sheet-head">
             <img src={LOGO} alt="Arisca Light Studio" width={120} height={60} />
             <button type="button" className="sm-close" onClick={closeMobileMenu} aria-label="Close menu">

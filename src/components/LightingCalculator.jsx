@@ -80,6 +80,8 @@ export default function LightingCalculator({ onNavigate }) {
               value={areaSqFt}
               onChange={(e) => setAreaSqFt(parseInt(e.target.value, 10))}
               className="calc-range-slider"
+              aria-label="Floor area in square feet"
+              aria-valuetext={`${areaSqFt} square feet`}
             />
             <div className="slider-ticks">
               <span>100 sq ft</span>
