@@ -143,7 +143,7 @@ export default function ShopPage({ initialCategory = 'all', query = '', onNaviga
     searchQuery.trim() !== '';
 
   return (
-    <div className="shop-page-wrapper light-theme-shop">
+    <div className="shop-page-wrapper">
       {/* Maximum SEO for Catalog */}
       <SeoHead
         title={`Architectural Downlights in Ahmedabad | ${enrichedProducts.length} Fixtures | Arisca Light Studio`}

@@ -73,7 +73,7 @@ export default function ProductDetailPage({ slug, onNavigate }) {
   };
 
   return (
-    <div className="product-detail-page-wrapper light-theme-detail">
+    <div className="product-detail-page-wrapper">
       {/* Maximum SEO for Google Product Rich Snippets */}
       <SeoHead
         title={`${product.title} | Specs & Finishes | Arisca Light Studio Ahmedabad`}

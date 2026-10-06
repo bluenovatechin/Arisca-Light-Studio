@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import { ArrowRight, ArrowUpRight, ChevronDown, MapPin, Clock, Phone, Ruler, PenTool, Images } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, ChevronDown, MapPin, Clock, Phone, Ruler, PenTool, Images, Sparkles } from 'lucide-react';
 import WhatsAppIcon from '../components/WhatsAppIcon';
 import { clientProjects, seoFaqs, clientTestimonials, enrichedProducts } from '../data/ariscaData';
 import { useCart } from '../context/CartContext';
 import SeoHead from '../components/SeoHead';
 import LightCard from '../components/LightCard';
+import ProductCard from '../components/ProductCard';
 import LightingCalculator from '../components/LightingCalculator';
 import { tug } from '../utils/tug';
 import { useCollection, collectionCategories, coverImage } from '../data/collection';
@@ -55,6 +56,14 @@ export default function HomePage({ onNavigate }) {
   const [heroLit, setHeroLit] = useState(false);
   const [editLit, setEditLit] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
+  const [downlightFilter, setDownlightFilter] = useState('all');
+
+  const displayedDownlights = useMemo(() => {
+    if (downlightFilter === 'all') {
+      return enrichedProducts.slice(0, 8);
+    }
+    return enrichedProducts.filter((p) => p.categoryKey === downlightFilter).slice(0, 8);
+  }, [downlightFilter]);
 
   const featured = useMemo(() => (items ? FEATURED.map((id) => items.find((i) => i.id === id)).filter(Boolean) : null), [items]);
   const counts = useMemo(() => {
@@ -160,12 +169,84 @@ export default function HomePage({ onNavigate }) {
         </div>
       </section>
 
-      {/* ============ DOWNLIGHTS BAND ============ */}
+      {/* ============ DOWNLIGHTS SHOWCASE SECTION ============ */}
+      <section className="section-v2 downlights-showcase-section" id="downlights">
+        <div className="container">
+          <div className="section-head-row">
+            <div>
+              <p className="eyebrow"><span className="eyebrow-lines" aria-hidden="true" />Architectural Lighting</p>
+              <h2 className="section-heading">Engineered Downlights & Spotlights</h2>
+              <p className="lede">
+                Anti-glare deep recessed COB spotlights, surface cylinders, and slim SSK panels. True Ra &gt; 90 color fidelity and optical precision for gypsum ceilings.
+              </p>
+            </div>
+            <a href="/shop" className="link-arrow">All {enrichedProducts.length} models <ArrowRight size={15} /></a>
+          </div>
+
+          <div className="downlights-tabs-bar">
+            {[
+              { id: 'all', label: 'All Models', count: enrichedProducts.length },
+              { id: 'cob', label: 'COB Downlights', count: enrichedProducts.filter((p) => p.categoryKey === 'cob').length },
+              { id: 'cylinder', label: 'Surface Cylinders', count: enrichedProducts.filter((p) => p.categoryKey === 'cylinder').length },
+              { id: 'panel', label: 'SSK Panels', count: enrichedProducts.filter((p) => p.categoryKey === 'panel').length }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                className={`downlights-tab-pill ${downlightFilter === tab.id ? 'is-active' : ''}`}
+                onClick={() => setDownlightFilter(tab.id)}
+              >
+                {tab.label} <span className="tab-badge">{tab.count}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="home-downlights-grid">
+            {displayedDownlights.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+
+          <div className="downlights-showcase-footer">
+            <div className="downlights-perks-row">
+              <div className="dl-perk">
+                <span className="dl-perk-bullet" />
+                <span>Deep anti-glare reflector cones</span>
+              </div>
+              <div className="dl-perk">
+                <span className="dl-perk-bullet" />
+                <span>Architectural Ra &gt; 90 CRI rating</span>
+              </div>
+              <div className="dl-perk">
+                <span className="dl-perk-bullet" />
+                <span>2-Year direct studio warranty</span>
+              </div>
+              <div className="dl-perk">
+                <span className="dl-perk-bullet" />
+                <span>Ahmedabad on-site beam layout survey</span>
+              </div>
+            </div>
+
+            <div className="downlights-cta-banner">
+              <div className="dl-cta-text">
+                <h3>Looking for room lux calculation & fixture count?</h3>
+                <p>We inspect your site, calculate false ceiling depths, and recommend precise beam spreads.</p>
+              </div>
+              <div className="dl-cta-actions">
+                <a href="/shop" className="btn-pill btn-pill-solid">Explore Full Downlight Catalog <ArrowRight size={16} /></a>
+                <button type="button" className="btn-pill btn-pill-ghost" onClick={openConsultModal}>Book Free Site Survey</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ ARCHITECTURAL SPOTLIGHT BAND ============ */}
       <section className="section-v2">
         <div className="container">
           <div className="band">
             <div className="band-copy">
-              <p className="eyebrow"><span className="eyebrow-lines" aria-hidden="true" />Architectural lighting</p>
+              <p className="eyebrow"><span className="eyebrow-lines" aria-hidden="true" />Laser Ceiling Survey</p>
               <h2 className="section-heading">The light you don't notice — until it's gone.</h2>
               <p className="lede">
                 Deep anti-glare COB downlights, surface cylinders and slim panels for false ceilings. {enrichedProducts.length} models

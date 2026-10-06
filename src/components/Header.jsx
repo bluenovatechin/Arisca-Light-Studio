@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useCart } from '../context/CartContext';
+import { useTheme } from '../context/ThemeContext';
 import { collectionCategories, coverImage } from '../data/collection';
 import {
   Menu,
@@ -12,7 +13,9 @@ import {
   ArrowRight,
   MapPin,
   Home,
-  Compass
+  Compass,
+  Sun,
+  Moon
 } from 'lucide-react';
 import WhatsAppIcon from './WhatsAppIcon';
 
@@ -64,6 +67,7 @@ export default function Header({ currentRoute, routeQuery, onNavigate }) {
     closeMobileMenu,
     cartPulse
   } = useCart();
+  const { theme, toggleTheme } = useTheme();
   const [openMenu, setOpenMenu] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const [pulsing, setPulsing] = useState(false);
@@ -244,6 +248,15 @@ export default function Header({ currentRoute, routeQuery, onNavigate }) {
           </nav>
 
           <div className="header-tools">
+            <button
+              type="button"
+              className="tool-btn theme-toggle-btn"
+              onClick={toggleTheme}
+              aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+              title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+            >
+              {theme === 'dark' ? <Sun size={19} className="theme-toggle-icon sun" /> : <Moon size={19} className="theme-toggle-icon moon" />}
+            </button>
             <button type="button" className="tool-search" onClick={openSearch} aria-label="Search (Ctrl + K)">
               <Search size={17} />
               <span>Search</span>
@@ -278,9 +291,20 @@ export default function Header({ currentRoute, routeQuery, onNavigate }) {
         <aside className="sheet-panel" role="dialog" aria-modal="true" aria-label="Menu">
           <div className="sheet-head">
             <img src={LOGO} alt="Arisca Light Studio" width={120} height={60} />
-            <button type="button" className="tool-btn" onClick={closeMobileMenu} aria-label="Close menu">
-              <X size={22} />
-            </button>
+            <div className="sheet-head-actions">
+              <button
+                type="button"
+                className="tool-btn theme-toggle-btn"
+                onClick={toggleTheme}
+                aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+                title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+              >
+                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+              </button>
+              <button type="button" className="tool-btn" onClick={closeMobileMenu} aria-label="Close menu">
+                <X size={22} />
+              </button>
+            </div>
           </div>
 
           <button type="button" className="sheet-search" onClick={() => { closeMobileMenu(); openSearch(); }}>

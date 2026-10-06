@@ -9,6 +9,16 @@
       window.location.replace(`https:${window.location.href.substring(window.location.protocol.length)}`);
     }
   </script>
+  <!-- Apply the saved / device theme before first paint (no white flash in dark mode) -->
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('arisca_theme'); } catch (e) {}
+      if (t !== 'dark' && t !== 'light') t = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', t);
+      if (t === 'dark') document.documentElement.style.background = '#0e1112';
+    })();
+  </script>
   <!-- GitHub Pages SPA Redirect Decoder -->
   <script>
     (function(l) {

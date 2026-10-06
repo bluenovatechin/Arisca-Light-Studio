@@ -142,7 +142,8 @@ export default function CollectionPage({ query = '', onNavigate }) {
             type="button"
             className={`pull-switch ${lightsOn ? 'is-on' : ''}`}
             onClick={(e) => {
-              tug(e.currentTarget);
+              // animate the cord span: React rewrites the button's own classes on toggle
+              tug(e.currentTarget.querySelector('.pull-switch-cord'));
               update({ lights: lightsOn ? '' : 'on' });
             }}
             aria-pressed={lightsOn}
