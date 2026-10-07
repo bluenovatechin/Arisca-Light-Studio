@@ -1,12 +1,11 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 
 // Where the production site lives.
-//   GitHub test link (bluenovatechin.github.io/Arisca-Light-Studio/): '/Arisca-Light-Studio/'
-//   Own domain (www.ariscalightstudio.com):                          '/'
-// Override without editing this file: BASE_PATH=/ npm run build
-// When switching to '/', also set pathSegmentsToKeep = 0 in public/404.html.
-const PROD_BASE = process.env.BASE_PATH || '/Arisca-Light-Studio/';
+//   GitHub Pages live link:  '/Arisca-Light-Studio/' (default)
+//   Custom domain:            '/'
+// Override: BASE_PATH=/ npm run build (or put BASE_PATH=/ in .env)
+const DEFAULT_SITE_URL = 'https://bluenovatechin.github.io/Arisca-Light-Studio';
 
 /**
  * The code and data refer to public files as "/assets/…" and "/fonts/…".
@@ -27,9 +26,14 @@ function prefixPublicPaths(base) {
 }
 
 // https://vite.dev/config/
-export default defineConfig(({ command, isPreview }) => {
-  // `npm run dev` serves from "/"; the build and `npm run preview` use the real base
-  const base = command === 'build' || isPreview ? PROD_BASE : '/';
+export default defineConfig(({ command, mode, isPreview }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  const siteUrl = process.env.VITE_SITE_URL || env.VITE_SITE_URL || DEFAULT_SITE_URL;
+  process.env.VITE_SITE_URL = siteUrl;
+
+  const base = command === 'build' || isPreview 
+    ? (process.env.BASE_PATH || env.BASE_PATH || '/Arisca-Light-Studio/') 
+    : '/';
   return {
     plugins: [react(), prefixPublicPaths(base)],
     base,

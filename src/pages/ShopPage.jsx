@@ -149,7 +149,7 @@ export default function ShopPage({ initialCategory = 'all', query = '', onNaviga
         title={`Architectural Downlights in Ahmedabad | ${enrichedProducts.length} Fixtures | Arisca Light Studio`}
         description="Browse Ahmedabad's complete architectural lighting range. COB downlights, surface cylinders, panels & magnetic track lights. True CRI Ra > 90. Free laser site survey across Ahmedabad."
         keywords="architectural lights ahmedabad, cob downlights, architectural light studio ahmedabad, lofy lighting, false ceiling downlights"
-        canonicalUrl="https://www.ariscalightstudio.com/#/shop"
+        canonicalUrl="/shop"
       />
 
       {/* Shop Hero Banner */}

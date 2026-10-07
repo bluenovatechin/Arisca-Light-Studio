@@ -11,7 +11,7 @@ export default function TermsPage({ onNavigate }) {
         title="Terms & Conditions | Arisca Light Studio Ahmedabad"
         description="Review the terms and conditions for architectural lighting supply, custom chandelier fabrication, on-site laser surveys, and warranty policies by Arisca Light Studio."
         keywords="arisca terms and conditions, lighting warranty ahmedabad, trade discount terms, luminaire supply agreement"
-        canonicalUrl="https://www.ariscalightstudio.com/#/terms-and-conditions"
+        canonicalUrl="/terms-and-conditions"
       />
 
       <section className="legal-hero-header">

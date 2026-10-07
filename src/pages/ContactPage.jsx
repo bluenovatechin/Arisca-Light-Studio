@@ -82,7 +82,7 @@ export default function ContactPage() {
         title="Contact Arisca Light Studio | Visit Our Ahmedabad Showroom"
         description="Connect with Arisca Light Studio at Money Plant High Street, Jagatpur Road, Ahmedabad. Call +91 98980 86656 or WhatsApp for quotations and consultations."
         keywords="arisca light studio contact, jagatpur road lighting store, ahmedabad lighting showroom phone number, book lighting visit"
-        canonicalUrl="https://www.ariscalightstudio.com/#/contact"
+        canonicalUrl="/contact"
       />
 
       {/* Hero Header */}

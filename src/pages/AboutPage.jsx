@@ -29,7 +29,7 @@ export default function AboutPage({ onNavigate }) {
         title="About Arisca Light Studio | Architectural Lighting Destination Ahmedabad"
         description="Learn the story of Arisca Light Studio on Jagatpur Road, Ahmedabad. Founded to bring glare-free optical precision and bespoke lighting artistry to Gujarat's finest homes."
         keywords="about arisca light studio, lighting showroom jagatpur road, ahmedabad lighting founders, architectural downlight studio"
-        canonicalUrl="https://www.ariscalightstudio.com/#/about"
+        canonicalUrl="/about"
       />
 
       {/* Hero Header */}

@@ -1,31 +1,46 @@
-# Arisca Light Studio
+# Arisca Light Studio — Architectural & Designer Lighting Ahmedabad
 
-> Designer and architectural lighting studio on Jagatpur Road, Ahmedabad, India. Over a thousand decorative lights (chandeliers, pendants, wall, wall-and-mirror, floor and table lamps) plus LOFY architectural COB downlights, with in-home lighting consultancy and trade support for architects and interior designers.
+> **Arisca Light Studio** is a premier lighting destination and architectural lighting studio located on Jagatpur Road, Ahmedabad, Gujarat, India. The studio specializes in high-CRI anti-glare architectural COB downlights (LOFY series), magnetic track systems, surface cylinders, luxury crystal chandeliers, sculpted pendants, contemporary wall sconces, mirror lights, and designer floor/table lamps.
 
-Prices are not published. Every quotation is prepared by the studio team after a consultation, so agents should help visitors shortlist pieces and book a visit or message the studio rather than quote prices.
+## Key Studio Offerings
 
-## Browse
+1. **Architectural Downlights (LOFY Series)**:
+   - Deep recessed anti-glare optical design (UGR < 16) preventing eye fatigue and glare.
+   - High Color Rendering Index (True CRI Ra > 90 / R9 > 50) for vivid, authentic interior color reproduction.
+   - Die-cast aluminum heatsinks with thermal dissipation for 50,000+ hour lifespans and 2-year warranty.
+   - Wattages: 7W, 12W, 15W, 18W, 24W, 30W.
+   - Color Temperatures: 3000K Warm White, 4000K Neutral White, 6000K Cool White, and CCT Tunable.
+   - Finishes: Matt White, Matt Black, Rose Gold, Champagne Gold, Dark Chrome, Gunmetal, Dual-Tone.
 
-- [The collection](https://www.ariscalightstudio.com/collection): every decorative light, filterable by category, type, finish, material and light source. Each piece has a studio photo and a styled room photo.
-- [Collection by category](https://www.ariscalightstudio.com/collection?cat=chandeliers): categories are `chandeliers`, `pendants`, `wall`, `wall-mirror` and `floor-table`.
-- [Architectural downlights](https://www.ariscalightstudio.com/shop): anti-glare COB downlights, surface cylinders and SSK panels with wattage, finish and room suitability.
-- [Search](https://www.ariscalightstudio.com/search?q=brass): full-text search across the collection and downlights. Use `?q=` with words such as a finish, material, type or item number.
-- [Client projects](https://www.ariscalightstudio.com/client-diaries): real installations across Ahmedabad.
-- [PDF catalogs](https://www.ariscalightstudio.com/catalogs): the original manufacturer catalogs.
+2. **Decorative Lighting Collection (1,000+ Pieces)**:
+   - **Chandeliers & Suspensions**: Contemporary statement chandeliers, grand double-height foyer chandeliers, K9 crystal cascades, organic brass branches, and modern minimalist rings.
+   - **Pendants**: Island pendants, dining suspensions, blown glass globes, sculpted metallic cones, and alabaster pendants.
+   - **Wall & Sconces**: Natural Spanish alabaster, Italian travertine, brushed brass sconces, indirect uplight/downlight washes, and back-lit art lights.
+   - **Wall & Mirror Vanity Lights**: IP44 moisture-resistant bathroom and dressing mirror luminaires.
+   - **Floor & Table Lamps**: Sculptural marble base lamps, wireless dimmable reading lights, and corner accent lights.
 
-## Services
+3. **Complimentary Studio Services**:
+   - **On-Site Laser Measurement**: Technical site survey across Ahmedabad (Bodakdev, Sindhu Bhavan, Ambli, Shela, Bopal, Science City, Satellite, Gota, Gandhinagar).
+   - **Lux & Beam Angle Planning**: Computer-modeled photometric calculations ensuring uniform illumination without dark spots or hot spots.
+   - **Architect & Interior Designer Trade Program**: Exclusive trade pricing, 3D photometric IES files, physical sample boxes, and dedicated on-site project coordinators.
+   - **White-Glove Installation**: Professional master technician installation with laser leveling.
 
-- [Home lighting consultancy](https://www.ariscalightstudio.com/home-consultancy): on-site visit, laser measurement, layout and lux plan.
-- [For architects & interior designers](https://www.ariscalightstudio.com/interior-designers): trade program, samples and project support.
+## Visiting & Inquiries
 
-## Contact
+- **Studio Address**: B-103, Money Plant High Street, Jagatpur Road, Ahmedabad, Gujarat 382470, India.
+- **Studio Hours**: Monday to Saturday, 10:00 AM to 8:30 PM.
+- **WhatsApp Direct Line**: +91 98980 86656 (Quickest response for quotes, site appointments, and stock inquiries).
+- **Telephone**: +91 98980 86656
+- **Email**: contact@ariscalightstudio.com
+- **Live Website**: https://bluenovatechin.github.io/Arisca-Light-Studio/
 
-- [Visit & contact](https://www.ariscalightstudio.com/contact): B-103, Money Plant High Street, Jagatpur Road, Ahmedabad, Gujarat 382470. Open Monday to Saturday, 10:00 am to 8:30 pm.
-- [WhatsApp](https://wa.me/919898086656): +91 98980 86656, the fastest way to reach the studio. All website forms send their details here.
-- [Call](tel:+919898086656): +91 98980 86656.
+## Navigation & Catalog Links
 
-## Optional
-
-- [About Arisca](https://www.ariscalightstudio.com/about)
-- [Privacy policy](https://www.ariscalightstudio.com/privacy-policy)
-- [Terms & conditions](https://www.ariscalightstudio.com/terms-and-conditions)
+- [Live Website](https://bluenovatechin.github.io/Arisca-Light-Studio/)
+- [Architectural Downlights](https://bluenovatechin.github.io/Arisca-Light-Studio/#/shop)
+- [The Decorative Collection](https://bluenovatechin.github.io/Arisca-Light-Studio/collection)
+- [Home Lighting Consultancy](https://bluenovatechin.github.io/Arisca-Light-Studio/#/home-consultancy)
+- [Trade Program for Architects & Designers](https://bluenovatechin.github.io/Arisca-Light-Studio/#/interior-designers)
+- [Client Project Diaries](https://bluenovatechin.github.io/Arisca-Light-Studio/#/client-diaries)
+- [Download Lighting Catalogs](https://bluenovatechin.github.io/Arisca-Light-Studio/catalogs)
+- [Contact Studio & Location](https://bluenovatechin.github.io/Arisca-Light-Studio/#/contact)

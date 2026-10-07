@@ -116,7 +116,7 @@ export default function CollectionPage({ query = '', onNavigate }) {
       <SeoHead
         title={`${category ? category.label : 'The Collection'} | Arisca Light Studio Ahmedabad`}
         description={`Browse ${items ? (category ? counts[cat] : items.length) : 'over a thousand'} designer ${category ? category.label.toLowerCase() : 'chandeliers, pendants, wall lights and lamps'} at Arisca Light Studio, Ahmedabad.`}
-        canonicalUrl={`https://www.ariscalightstudio.com/collection${cat ? `?cat=${cat}` : ''}`}
+        canonicalUrl={`/collection${cat ? `?cat=${cat}` : ''}`}
       />
 
       <section className="coll-hero">

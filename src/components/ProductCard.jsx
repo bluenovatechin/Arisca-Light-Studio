@@ -26,7 +26,7 @@ export default function ProductCard({ product, priority = false }) {
         <span className="pc-media">
           <img
             src={primaryImg}
-            alt=""
+            alt={`${product.title} - ${product.finish ? product.finish + ' ' : ''}${product.wattage ? product.wattage + 'W ' : ''}Architectural Downlight | Arisca Light Studio Ahmedabad`}
             width={640}
             height={640}
             loading={priority ? 'eager' : 'lazy'}
@@ -35,7 +35,7 @@ export default function ProductCard({ product, priority = false }) {
           />
           {/* second photo is only fetched once someone actually hovers (never on phones) */}
           {hovered && secondaryImg && secondaryImg !== primaryImg && (
-            <img className="pc-media-alt" src={secondaryImg} alt="" aria-hidden="true" loading="lazy" decoding="async" />
+            <img className="pc-media-alt" src={secondaryImg} alt={`${product.title} in-room detail - Arisca Light Studio`} loading="lazy" decoding="async" />
           )}
           {product.ribbon && (
             <span className="pc-ribbon"><Sparkles size={11} /> {product.ribbon}</span>

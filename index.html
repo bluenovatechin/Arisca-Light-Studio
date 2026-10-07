@@ -39,27 +39,32 @@
   
   <meta name="description" content="Explore Arisca Light Studio, your ultimate destination for Premium Architectural Lighting, LOFY recessed downlights, wall sconces, chandeliers, and bespoke residential illumination in Ahmedabad. Enjoy expert design consultation, precise laser site measurement, and white-glove installation.">
   <meta name="keywords" content="Premium Lighting, Architectural Lighting, LOFY Lights, Ahmedabad Lighting Studio, Recessed COB, Chandeliers, Pendant Lights, Wall Sconces, Ceiling Lights">
-  <link rel="canonical" href="https://www.ariscalightstudio.com/">
+  <link rel="canonical" href="%VITE_SITE_URL%/">
   
-  <!-- Open Graph / Facebook -->
+  <!-- Open Graph / Facebook / WhatsApp -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.ariscalightstudio.com/">
+  <meta property="og:url" content="%VITE_SITE_URL%/">
   <meta property="og:title" content="Discover Arisca Light Studio - Premium Architectural Lighting | Ahmedabad">
-  <meta property="og:description" content="Explore Arisca Light Studio, your ultimate destination for Premium Lighting, wall sconces, chandeliers, and home lighting in Ahmedabad.">
-  <meta property="og:image" content="https://www.ariscalightstudio.com/assets/branding/arisca-300-x-150-px-Awv8y3X42eTqlgJQ.png">
+  <meta property="og:description" content="Explore Arisca Light Studio: Premium Architectural Lighting, LOFY recessed downlights, luxury chandeliers, wall sconces, and bespoke residential illumination in Ahmedabad.">
+  <meta property="og:image" content="%VITE_SITE_URL%/assets/branding/og-banner.jpg">
+  <meta property="og:image:secure_url" content="%VITE_SITE_URL%/assets/branding/og-banner.jpg">
+  <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Arisca Light Studio - Architectural Lighting Ahmedabad">
+  <meta property="og:image:alt" content="Arisca Light Studio - Architectural & Designer Lighting Ahmedabad">
   <meta property="og:site_name" content="Arisca Light Studio">
 
   <!-- Twitter Cards -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Discover Arisca Light Studio - Premium Architectural Lighting | Ahmedabad">
   <meta name="twitter:description" content="Architectural LOFY downlights, chandeliers, and bespoke lighting consultations in Ahmedabad.">
-  <meta name="twitter:image" content="https://www.ariscalightstudio.com/assets/branding/arisca-300-x-150-px-Awv8y3X42eTqlgJQ.png">
+  <meta name="twitter:image" content="%VITE_SITE_URL%/assets/branding/og-banner.jpg">
   
-  <!-- Local Favicon -->
-  <link rel="icon" type="image/png" sizes="64x64" href="/assets/branding/favicon-64.png">
+  <!-- Standard Favicons (Google Search compliant: 48px multiples & root ICO) -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="48x48" href="/assets/branding/favicon-48.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/branding/favicon-96.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/branding/favicon-192.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/branding/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.webmanifest">
   <!-- For AI agents: site summary and agent catalog -->
@@ -74,15 +79,17 @@
   
   <!-- Fonts are self-hosted and loaded from src/fonts.css (bundled by Vite) -->
 
-  <!-- Structured Data Schema.org -->
+  <!-- Structured Data Schema.org (Google Knowledge Panel & Local Business) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "HomeGoodsStore",
+    "@type": ["LightingStore", "HomeGoodsStore", "Organization"],
     "name": "Arisca Light Studio",
-    "image": "/assets/branding/arisca-300-x-150-px-Awv8y3X42eTqlgJQ.png",
-    "url": "https://www.ariscalightstudio.com",
+    "image": "%VITE_SITE_URL%/assets/branding/og-banner.jpg",
+    "logo": "%VITE_SITE_URL%/assets/branding/google-logo-512.png",
+    "url": "%VITE_SITE_URL%/",
     "telephone": "+919898086656",
+    "priceRange": "$$",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "B - 103, Money Plant High Street, Jagatpur Road",
@@ -90,6 +97,11 @@
       "addressRegion": "Gujarat",
       "postalCode": "382470",
       "addressCountry": "IN"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "23.1098",
+      "longitude": "72.5385"
     },
     "openingHoursSpecification": {
       "@type": "OpeningHoursSpecification",

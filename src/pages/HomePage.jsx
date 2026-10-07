@@ -94,7 +94,7 @@ export default function HomePage({ onNavigate }) {
       <SeoHead
         title="Arisca Light Studio Ahmedabad | Chandeliers, Pendants, Wall Lights & Downlights"
         description="Discover over a thousand designer chandeliers, pendant lights, wall lights and lamps at Arisca Light Studio, Jagatpur Road, Ahmedabad. See every piece in the studio and in a real room, then visit us to see them lit."
-        canonicalUrl="https://www.ariscalightstudio.com/"
+        canonicalUrl="/"
       />
 
       {/* ============ HERO ============ */}

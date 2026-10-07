@@ -138,7 +138,7 @@ export default function ClientDiariesPage({ onNavigate }) {
         title="Client Project Diaries | Real Architectural Lighting Installations in Ahmedabad"
         description="Browse authentic architectural lighting installations across luxury villas and penthouses in Bodakdev, Ambli, Sindhu Bhavan, and Science City Ahmedabad."
         keywords="lighting projects ahmedabad, luxury villa lighting ahmedabad, living room lights client diary, cob downlight installations ahmedabad"
-        canonicalUrl="https://www.ariscalightstudio.com/#/client-diaries"
+        canonicalUrl="/client-diaries"
       />
 
       {/* Page Hero Header */}

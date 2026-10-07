@@ -98,7 +98,7 @@ export default function HomeConsultancyPage({ onNavigate }) {
         title="Home Lighting Consultancy in Ahmedabad | Free On-Site Lux & Beam Planning"
         description="Book a free on-site architectural lighting consultation in Ahmedabad. Our engineers bring laser meters and photometrics to design anti-glare layouts for luxury villas and penthouses."
         keywords="home lighting consultancy ahmedabad, architectural lighting engineer ahmedabad, lux calculator ahmedabad, false ceiling lighting plan"
-        canonicalUrl="https://www.ariscalightstudio.com/#/home-consultancy"
+        canonicalUrl="/home-consultancy"
       />
 
       {/* Hero Header */}

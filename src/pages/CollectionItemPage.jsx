@@ -18,8 +18,8 @@ function CompareSlider({ item }) {
   const [pos, setPos] = useState(50);
   return (
     <div className="cmp" style={{ '--pos': `${pos}%` }}>
-      <img className="cmp-studio" src={studioImage(item)} alt={`${item.title}, studio photograph`} width={600} height={800} />
-      <img className="cmp-scene" src={sceneImage(item)} alt={`${item.title}, styled in a room`} width={600} height={800} />
+      <img className="cmp-studio" src={studioImage(item)} alt={`${item.title} (No. ${item.no}) - Studio product photo | Arisca Light Studio Ahmedabad`} width={600} height={800} />
+      <img className="cmp-scene" src={sceneImage(item)} alt={`${item.title} (No. ${item.no}) - Styled in luxury room interior | Arisca Light Studio Ahmedabad`} width={600} height={800} />
       <span className="cmp-tag cmp-tag-l">Studio</span>
       <span className="cmp-tag cmp-tag-r">In a room</span>
       <span className="cmp-handle" aria-hidden="true">
@@ -96,8 +96,25 @@ export default function CollectionItemPage({ id, onNavigate }) {
       <SeoHead
         title={`${item.title} (${item.no}) | Arisca Light Studio Ahmedabad`}
         description={`${item.title}, item ${item.no}. ${item.material}${item.size ? `, ${item.size}` : ''}. ${item.lamp}. See it in our Ahmedabad studio on Jagatpur Road.`}
-        canonicalUrl={`https://www.ariscalightstudio.com/collection/${item.id}`}
-        ogImage={sceneImage(item)}
+        canonicalUrl={`/collection/${item.id}`}
+        ogImage={studioImage(item)}
+        schemaType="Product"
+        productData={{
+          id: item.id,
+          no: item.no,
+          sku: item.sku || `ARISCA-${item.no}`,
+          title: `${item.title} (No. ${item.no})`,
+          subtitle: `${item.material || ''} ${item.finish || ''}`,
+          descriptionText: `${item.title}, item ${item.no}. ${item.material || ''} finish, ${item.lamp || 'LED'}. Dimensions: ${item.size || 'Custom'}. Experience it at Arisca Light Studio Ahmedabad.`,
+          studioImage: studioImage(item),
+          sceneImage: sceneImage(item),
+          thumbnail: studioImage(item),
+          brand: 'Arisca Light Studio',
+          type: item.type,
+          category: category?.label || 'Decorative Lighting',
+          rating: '4.9',
+          reviewCount: '24'
+        }}
       />
 
       <div className="container">

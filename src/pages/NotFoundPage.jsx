@@ -19,7 +19,7 @@ export default function NotFoundPage({ onNavigate }) {
       <SeoHead
         title="404 - Page Not Found | Arisca Light Studio"
         description="The lighting page or fixture you were looking for could not be found. Explore our complete architectural lighting collection."
-        canonicalUrl="https://www.ariscalightstudio.com/#/404"
+        canonicalUrl="/404"
       />
 
       <div className="container">

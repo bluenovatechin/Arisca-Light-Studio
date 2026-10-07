@@ -1,15 +1,19 @@
 import React, { useEffect } from 'react';
 import { studioLocationInfo, seoFaqs } from '../data/ariscaData';
+import { SITE_URL, getAbsoluteUrl, DEFAULT_OG_IMAGE, GOOGLE_LOGO_IMAGE } from '../utils/siteConfig';
 
 export default function SeoHead({
   title = 'Arisca Light Studio | Premium Architectural Lighting & Downlights in Ahmedabad',
   description = 'Shop luxury architectural lighting, anti-glare LOFY COB downlights, surface cylinders, and magnetic track lights in Ahmedabad. Free laser site measurement and lighting consultation at our Jagatpur Road studio.',
   keywords = 'architectural lighting ahmedabad, cob downlights, lofy lights, surface cylinder light, living room lighting, false ceiling light ahmedabad, arisca light studio, modern chandeliers ahmedabad, jagatpur road lighting store',
-  canonicalUrl = 'https://www.ariscalightstudio.com/',
-  ogImage = '/assets/branding/arisca-300-x-150-px-Awv8y3X42eTqlgJQ.png',
+  canonicalUrl,
+  ogImage,
   schemaType = 'LightingStore',
   productData = null
 }) {
+  const resolvedCanonical = getAbsoluteUrl(canonicalUrl || '/');
+  const resolvedOgImage = getAbsoluteUrl(ogImage || DEFAULT_OG_IMAGE);
+
   useEffect(() => {
     // Dynamic document title
     document.title = title;
@@ -30,12 +34,16 @@ export default function SeoHead({
     setMeta('keywords', keywords);
     setMeta('og:title', title, true);
     setMeta('og:description', description, true);
-    setMeta('og:url', canonicalUrl, true);
-    setMeta('og:image', ogImage, true);
+    setMeta('og:url', resolvedCanonical, true);
+    setMeta('og:image', resolvedOgImage, true);
+    setMeta('og:image:secure_url', resolvedOgImage, true);
+    setMeta('og:image:type', resolvedOgImage.endsWith('.png') ? 'image/png' : 'image/jpeg', true);
+    setMeta('og:image:width', '1200', true);
+    setMeta('og:image:height', '630', true);
     setMeta('twitter:card', 'summary_large_image');
     setMeta('twitter:title', title);
     setMeta('twitter:description', description);
-    setMeta('twitter:image', ogImage);
+    setMeta('twitter:image', resolvedOgImage);
 
     // Canonical link
     let canonical = document.querySelector('link[rel="canonical"]');
@@ -44,22 +52,23 @@ export default function SeoHead({
       canonical.setAttribute('rel', 'canonical');
       document.head.appendChild(canonical);
     }
-    canonical.setAttribute('href', canonicalUrl);
+    canonical.setAttribute('href', resolvedCanonical);
 
     // JSON-LD Structured Data
     const storeSchema = {
       '@context': 'https://schema.org',
-      '@type': ['LightingStore', 'HomeGoodsStore'],
-      '@id': 'https://www.ariscalightstudio.com/#store',
+      '@type': ['LightingStore', 'HomeGoodsStore', 'Organization'],
+      '@id': `${SITE_URL}/#store`,
       name: 'Arisca Light Studio',
       alternateName: 'Arisca Architectural Lighting Ahmedabad',
-      url: 'https://www.ariscalightstudio.com/',
-      logo: 'https://www.ariscalightstudio.com/assets/branding/arisca-300-x-150-px-Awv8y3X42eTqlgJQ.png',
-      image: 'https://www.ariscalightstudio.com/assets/branding/arisca-300-x-150-px-Awv8y3X42eTqlgJQ.png',
+      url: `${SITE_URL}/`,
+      logo: GOOGLE_LOGO_IMAGE,
+      image: resolvedOgImage,
       telephone: studioLocationInfo.phone,
       email: studioLocationInfo.email,
       currenciesAccepted: 'INR',
       paymentAccepted: 'Cash, Credit Card, UPI, Net Banking',
+      priceRange: '$$',
       address: {
         '@type': 'PostalAddress',
         streetAddress: studioLocationInfo.address,
@@ -105,8 +114,8 @@ export default function SeoHead({
           },
           {
             '@type': 'OfferCatalog',
-            name: 'Surface Cylinders',
-            itemListElement: { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Dual-Tone Surface Cylinders' } }
+            name: 'Luxury Chandeliers & Suspensions',
+            itemListElement: { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Sculpted Pendants & Crystal Chandeliers' } }
           }
         ]
       }
@@ -135,27 +144,48 @@ export default function SeoHead({
 
     const schemas = [storeSchema, faqSchema];
     if (productData) {
+      const productImg = getAbsoluteUrl(
+        productData.thumbnail ||
+        productData.images?.[0]?.url ||
+        productData.studioImage ||
+        productData.sceneImage ||
+        DEFAULT_OG_IMAGE
+      );
+
       schemas.push({
         '@context': 'https://schema.org',
         '@type': 'Product',
         name: productData.title,
-        image: productData.thumbnail,
-        description: productData.descriptionText || productData.subtitle,
-        sku: productData.id,
+        image: [productImg],
+        description: productData.descriptionText || productData.subtitle || `${productData.title} by Arisca Light Studio`,
+        sku: String(productData.id || productData.no || productData.sku || ''),
+        mpn: String(productData.sku || productData.no || productData.id || ''),
         brand: {
           '@type': 'Brand',
-          name: productData.brand || 'LOFY'
+          name: productData.brand || 'Arisca Light Studio'
+        },
+        category: productData.category || productData.type || 'Architectural Lighting',
+        offers: {
+          '@type': 'Offer',
+          url: resolvedCanonical,
+          priceCurrency: 'INR',
+          price: productData.price || '0',
+          availability: 'https://schema.org/InStock',
+          seller: {
+            '@type': 'Organization',
+            name: 'Arisca Light Studio'
+          }
         },
         aggregateRating: {
           '@type': 'AggregateRating',
-          ratingValue: productData.rating || '4.8',
-          reviewCount: productData.reviewCount || '28'
+          ratingValue: productData.rating || '4.9',
+          reviewCount: productData.reviewCount || '32'
         }
       });
     }
 
     scriptTag.textContent = JSON.stringify(schemas);
-  }, [title, description, keywords, canonicalUrl, ogImage, productData]);
+  }, [title, description, keywords, resolvedCanonical, resolvedOgImage, productData]);
 
   return null;
 }

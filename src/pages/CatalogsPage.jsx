@@ -26,7 +26,7 @@ export default function CatalogsPage() {
       <SeoHead
         title="Lighting Catalogs | Arisca Light Studio Ahmedabad"
         description="Browse the Lofy lighting catalogs online — chandeliers, pendants, wall lights, mirror lights, floor and table lamps — or download the full PDFs."
-        canonicalUrl="https://www.ariscalightstudio.com/catalogs"
+        canonicalUrl="/catalogs"
       />
 
       <section className="coll-hero">

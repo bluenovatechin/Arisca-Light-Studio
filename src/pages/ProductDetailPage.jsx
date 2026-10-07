@@ -55,7 +55,8 @@ export default function ProductDetailPage({ slug, onNavigate }) {
   };
 
   const handleWhatsApp = () => {
-    const text = `Hello Arisca Light Studio!\n\nI'd like to know more about *${product.title}*:\n• Finish: ${product.finish || 'Dual Tone'}\n• Wattage: ${product.wattage ? product.wattage + 'W' : '—'}\n\nPlease share availability and arrange an on-site visit in Ahmedabad.\n\nProduct link: https://www.ariscalightstudio.com/product/${product.slug}`;
+    const productUrl = typeof window !== 'undefined' ? window.location.href : `https://bluenovatechin.github.io/Arisca-Light-Studio/product/${product.slug}`;
+    const text = `Hello Arisca Light Studio!\n\nI'd like to know more about *${product.title}*:\n• Finish: ${product.finish || 'Dual Tone'}\n• Wattage: ${product.wattage ? product.wattage + 'W' : '—'}\n\nPlease share availability and arrange an on-site visit in Ahmedabad.\n\nProduct link: ${productUrl}`;
     openWhatsApp(text);
   };
 
@@ -79,7 +80,7 @@ export default function ProductDetailPage({ slug, onNavigate }) {
         title={`${product.title} | Specs & Finishes | Arisca Light Studio Ahmedabad`}
         description={`${product.title} (${product.finish}): ${product.wattage}W high-CRI anti-glare architectural downlight with a 2-year studio warranty. See it lit at our Ahmedabad studio.`}
         keywords={`${product.title}, ${product.title} ahmedabad, ${product.wattage}w downlight, cob downlight ahmedabad`}
-        canonicalUrl={`https://www.ariscalightstudio.com/product/${product.slug}`}
+        canonicalUrl={`/product/${product.slug}`}
         ogImage={product.thumbnail}
         schemaType="Product"
         productData={product}

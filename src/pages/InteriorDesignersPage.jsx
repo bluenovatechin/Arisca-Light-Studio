@@ -81,7 +81,7 @@ export default function InteriorDesignersPage() {
         title="For Architects & Interior Designers | Arisca Trade Program Ahmedabad"
         description="Partner with Arisca Light Studio. Unlock trade discounts, physical sample boxes, 3D/IES photometric files, and dedicated on-site project coordination for design firms."
         keywords="architect trade discount lighting ahmedabad, interior designer lighting program, photometric files ahmedabad, custom chandelier fabrication"
-        canonicalUrl="https://www.ariscalightstudio.com/#/interior-designers"
+        canonicalUrl="/interior-designers"
       />
 
       {/* Hero Header */}

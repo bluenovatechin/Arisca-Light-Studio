@@ -11,7 +11,7 @@ export default function PrivacyPolicyPage({ onNavigate }) {
         title="Privacy Policy | Arisca Light Studio Ahmedabad"
         description="Read Arisca Light Studio's privacy policy. Learn how we collect, protect, and handle your data for lighting inquiries, site consultations, and studio services in Ahmedabad."
         keywords="arisca light studio privacy policy, customer data protection ahmedabad, lighting consultation terms"
-        canonicalUrl="https://www.ariscalightstudio.com/#/privacy-policy"
+        canonicalUrl="/privacy-policy"
       />
 
       <section className="legal-hero-header">

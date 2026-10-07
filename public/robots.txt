@@ -4,5 +4,24 @@ Allow: /
 Allow: /assets/
 Allow: /fonts/
 
+# AI Search Crawlers (ChatGPT Search, Perplexity, Claude, Gemini)
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
 # Sitemaps
-Sitemap: https://www.ariscalightstudio.com/sitemap.xml
+Sitemap: https://bluenovatechin.github.io/Arisca-Light-Studio/sitemap.xml

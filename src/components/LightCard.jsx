@@ -33,7 +33,7 @@ export default function LightCard({ item, lit = false, feature = false, priority
         <img
           className="lc-studio"
           src={studioImage(item)}
-          alt={`${item.title} — item ${item.no}`}
+          alt={`${item.title} (Item ${item.no}) - ${item.finishFamily || item.finish || ''} ${item.type} | Arisca Light Studio Ahmedabad`}
           loading={priority ? 'eager' : 'lazy'}
           fetchpriority={priority ? 'high' : undefined}
           decoding="async"
@@ -43,8 +43,7 @@ export default function LightCard({ item, lit = false, feature = false, priority
         <img
           className="lc-scene"
           src={sceneImage(item)}
-          alt=""
-          aria-hidden="true"
+          alt={`${item.title} styled in interior room setting - Arisca Light Studio Item ${item.no}`}
           loading="lazy"
           decoding="async"
           width={600}

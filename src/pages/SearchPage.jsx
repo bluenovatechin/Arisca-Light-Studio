@@ -102,7 +102,7 @@ export default function SearchPage({ query = '', onNavigate }) {
       <SeoHead
         title={q ? `“${q}” — Search | Arisca Light Studio` : 'Search lights | Arisca Light Studio'}
         description="Search over a thousand designer lights and architectural downlights at Arisca Light Studio, Ahmedabad."
-        canonicalUrl="https://www.ariscalightstudio.com/search"
+        canonicalUrl="/search"
       />
 
       <section className="coll-hero srch-hero">
